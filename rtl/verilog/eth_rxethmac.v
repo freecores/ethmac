@@ -3,19 +3,20 @@
 ////  eth_rxethmac.v                                              ////
 ////                                                              ////
 ////  This file is part of the Ethernet IP core project           ////
-////  http://www.opencores.org/projects/ethmac/                   ////
+////  http://www.opencores.org/projects,ethmac/                   ////
 ////                                                              ////
 ////  Author(s):                                                  ////
 ////      - Igor Mohor (igorM@opencores.org)                      ////
 ////      - Novan Hartadi (novan@vlsi.itb.ac.id)                  ////
 ////      - Mahmud Galela (mgalela@vlsi.itb.ac.id)                ////
+////      - Olof Kindgren (olof@opencores.org                     ////
 ////                                                              ////
 ////  All additional information is avaliable in the Readme.txt   ////
 ////  file.                                                       ////
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
-//// Copyright (C) 2001 Authors                                   ////
+//// Copyright (C) 2011 Authors                                   ////
 ////                                                              ////
 //// This source file may be used and distributed without         ////
 //// restriction provided that this copyright statement is not    ////
@@ -40,7 +41,11 @@
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
 //
+// 2011-07-06 Olof Kindgren <olof@opencores.org>
+// Add ByteCntEq0 to rxaddrcheck
+//
 // CVS Revision History
+//
 //
 // $Log: not supported by cvs2svn $
 // Revision 1.12  2004/04/26 15:26:23  igorm
@@ -221,7 +226,7 @@ eth_rxaddrcheck rxaddrcheck1
                .Broadcast (Broadcast),  .r_Bro (r_Bro),             .r_Pro(r_Pro),
                .ByteCntEq6(ByteCntEq6), .ByteCntEq7(ByteCntEq7),    .ByteCntEq2(ByteCntEq2), 
                .ByteCntEq3(ByteCntEq3), .ByteCntEq4(ByteCntEq4),    .ByteCntEq5(ByteCntEq5), 
-               .HASH0(r_HASH0),         .HASH1(r_HASH1),           
+               .HASH0(r_HASH0),         .HASH1(r_HASH1),            .ByteCntEq0(ByteCntEq0),
                .CrcHash(CrcHash),       .CrcHashGood(CrcHashGood),  .StateData(StateData),
                .Multicast(Multicast),   .MAC(MAC),                  .RxAbort(RxAbort),
                .RxEndFrm(RxEndFrm),     .AddressMiss(AddressMiss),  .PassAll(PassAll),

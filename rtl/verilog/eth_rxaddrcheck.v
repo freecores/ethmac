@@ -3,17 +3,18 @@
 ////  eth_rxaddrcheck.v                                           ////
 ////                                                              ////
 ////  This file is part of the Ethernet IP core project           ////
-////  http://www.opencores.org/cores/ethmac/                      ////
+////  http://www.opencores.org/project,ethmac/                    ////
 ////                                                              ////
 ////  Author(s):                                                  ////
 ////      - Bill Dittenhofer (billditt@aol.com)                   ////
+////      - Olof Kindgren    (olof@opencores.org)                 ////
 ////                                                              ////
 ////  All additional information is avaliable in the Readme.txt   ////
 ////  file.                                                       ////
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
-//// Copyright (C) 2001 Authors                                   ////
+//// Copyright (C) 2011 Authors                                   ////
 ////                                                              ////
 //// This source file may be used and distributed without         ////
 //// restriction provided that this copyright statement is not    ////
@@ -38,10 +39,16 @@
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
 //
+// 2011-07-06 Olof Kindgren <olof@opencores.org>
+// Reset AdressMiss when a new frame arrives. Otherwise it will report
+// the last value when a frame is less than seven bytes
+//
 // CVS Revision History
 //
+//
 // $Log: not supported by cvs2svn $
-// Revision 1.8  2002/11/19 17:34:52  mohor
+//
+//  // Revision 1.8  2002/11/19 17:34:52  mohor
 // AddressMiss status is connecting to the Rx BD. AddressMiss is identifying
 // that a frame was received because of the promiscous mode.
 //
@@ -69,7 +76,7 @@
 
 module eth_rxaddrcheck(MRxClk,  Reset, RxData, Broadcast ,r_Bro ,r_Pro,
                        ByteCntEq2, ByteCntEq3, ByteCntEq4, ByteCntEq5,
-                       ByteCntEq6, ByteCntEq7, HASH0, HASH1, 
+                       ByteCntEq6, ByteCntEq7, HASH0, HASH1, ByteCntEq0,
                        CrcHash,    CrcHashGood, StateData, RxEndFrm,
                        Multicast, MAC, RxAbort, AddressMiss, PassAll,
                        ControlFrmAddressOK
@@ -83,6 +90,7 @@ parameter Tp = 1;
   input        Broadcast; 
   input        r_Bro; 
   input        r_Pro; 
+  input        ByteCntEq0;
   input        ByteCntEq2;
   input        ByteCntEq3;
   input        ByteCntEq4;
@@ -142,6 +150,8 @@ end
 always @ (posedge MRxClk or posedge Reset)
 begin
   if(Reset)
+    AddressMiss <= #Tp 1'b0;
+  else if(ByteCntEq0)
     AddressMiss <= #Tp 1'b0;
   else if(ByteCntEq7 & RxCheckEn)
     AddressMiss <= #Tp (~(UnicastOK | BroadcastOK | MulticastOK | (PassAll & ControlFrmAddressOK)));

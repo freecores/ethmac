@@ -14691,7 +14691,8 @@ begin
         end
       join
       // check length of a PACKET
-      if ( ((data[31:16] != (i_length + 4)) && (num_of_frames >= 3)) ||
+       tmp_data = data[31:16];
+      if ( ((tmp_data != (i_length + 4)) && (num_of_frames >= 3)) ||
            ((data[31:16] != 0) && (num_of_frames < 3)) )
       begin
         `TIME; $display("*E Wrong length of the packet out from PHY (%0d instead of %0d)", 
@@ -15223,7 +15224,8 @@ begin
         end
       join
       // check length of a PACKET
-      if ( ((data[31:16] != (i_length + 4)) && (num_of_frames >= 3)) ||
+       tmp_data = data[31:16];
+      if ( ((tmp_data != (i_length + 4)) && (num_of_frames >= 3)) ||
            ((data[31:16] != 0) && (num_of_frames < 3)) )
       begin
         `TIME; $display("*E Wrong length of the packet out from PHY (%0d instead of %0d)", 

@@ -14761,8 +14761,8 @@ begin
       end
       else if (num_of_frames > 4) // MAC does not recognize Dest. ADDR. for lengths 5, 6 => no MISS
       begin
-        if ( (data[15:0] !== 16'h6084) && // wrap bit
-             (data[15:0] !== 16'h4084) ) // without wrap bit
+        if ( (data[15:0] !== 16'h6004) && // wrap bit
+             (data[15:0] !== 16'h4004) ) // without wrap bit
         begin
           `TIME; $display("*E RX buffer descriptor status is not correct: %0h - len: %0d", data[15:0], num_of_frames);
           test_fail("RX buffer descriptor status is not correct");
@@ -14771,8 +14771,8 @@ begin
       end
       else if (num_of_frames > 2) // MAC does not recognize Dest. ADDR. for length 3, 4 => no MISS, CRC ERROR
       begin
-        if ( (data[15:0] !== 16'h6086) && // wrap bit
-             (data[15:0] !== 16'h4086) ) // without wrap bit
+        if ( (data[15:0] !== 16'h6006) && // wrap bit
+             (data[15:0] !== 16'h4006) ) // without wrap bit
         begin
           `TIME; $display("*E RX buffer descriptor status is not correct: %0h - len: %0d", data[15:0], num_of_frames);
           test_fail("RX buffer descriptor status is not correct");
@@ -15293,8 +15293,8 @@ begin
       end
       else if (num_of_frames > 4) // MAC does not recognize Dest. ADDR. for lengths 5, 6 => no MISS
       begin
-        if ( (data[15:0] !== 16'h6084) && // wrap bit
-             (data[15:0] !== 16'h4084) ) // without wrap bit
+        if ( (data[15:0] !== 16'h6004) && // wrap bit
+             (data[15:0] !== 16'h4004) ) // without wrap bit
         begin
           `TIME; $display("*E RX buffer descriptor status is not correct: %0h - len: %0d", data[15:0], num_of_frames);
           test_fail("RX buffer descriptor status is not correct");
@@ -15303,8 +15303,8 @@ begin
       end
       else if (num_of_frames > 2) // MAC does not recognize Dest. ADDR. for length 3, 4 => no MISS, CRC ERROR
       begin
-        if ( (data[15:0] !== 16'h6086) && // wrap bit
-             (data[15:0] !== 16'h4086) ) // without wrap bit
+        if ( (data[15:0] !== 16'h6006) && // wrap bit
+             (data[15:0] !== 16'h4006) ) // without wrap bit
         begin
           `TIME; $display("*E RX buffer descriptor status is not correct: %0h - len: %0d", data[15:0], num_of_frames);
           test_fail("RX buffer descriptor status is not correct");

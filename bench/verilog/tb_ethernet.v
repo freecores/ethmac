@@ -2400,9 +2400,9 @@ begin
           #Tp cnt = 0;
           if (i3 == 0) // write after write
           begin
-            phy_data = {8'h7A, (i[7:0] + 1'b1)};
-            // write request
-            #Tp mii_write_req(phy_addr, reg_addr, phy_data);
+            phy_data = {8'h78, (i[7:0] + 1'b1)};
+            // write request, bit 9 in phy_data is self-clearing
+            #Tp mii_write_req(phy_addr, reg_addr, (phy_data|16'h0200));
             // wait for serial bus to become active
             wait(Mdio_IO !== 1'bz);
             // count transfer length

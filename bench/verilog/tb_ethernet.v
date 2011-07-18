@@ -3,7 +3,7 @@
 ////  tb_ethernet.v                                               ////
 ////                                                              ////
 ////  This file is part of the Ethernet IP core project           ////
-////  http://www.opencores.org/projects/ethmac/                   ////
+////  http://www.opencores.org/project,ethmac                     ////
 ////                                                              ////
 ////  Author(s):                                                  ////
 ////      - Tadej Markovic, tadej@opencores.org                   ////

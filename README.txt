@@ -49,7 +49,9 @@ RUNNING the simulation/Testbench in Icarus Verilog:
 Go to the scripts directory and write "make rtl-tests"
 All logs will be saved in the log directory
 
-VCD dumps are coming soon
+To activate VCD dumps, run with "make rtl-tests VCD=1". The VCD is saved
+in build/sim/ethmac.vcd
+
 
 RUNNING the simulation/Testbench in ModelSIM:
 

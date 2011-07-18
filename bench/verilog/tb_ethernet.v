@@ -438,6 +438,10 @@ begin
   $fdisplay(wb_m_mon_log_file_desc, "   Only ERRONEOUS conditions are logged !");
   $fdisplay(wb_m_mon_log_file_desc, " ");
 
+`ifdef VCD
+   $dumpfile("../build/sim/ethmac.vcd");
+   $dumpvars(0);
+`endif
   // Reset pulse
   wb_rst =  1'b1;
   #423 wb_rst =  1'b0;

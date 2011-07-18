@@ -3,10 +3,11 @@
 ////  README.txt                                                  ////
 ////                                                              ////
 ////  This file is part of the Ethernet IP core project           ////
-////  http://www.opencores.org/projects/ethmac/                   ////
+////  http://www.opencores.org/project,ethmac                     ////
 ////                                                              ////
 ////  Author(s):                                                  ////
 ////      - Igor Mohor (igorM@opencores.org)                      ////
+////      - Olof Kindgren (olof@opencores.org)                    ////
 ////                                                              ////
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
@@ -42,6 +43,13 @@
 //
 //
 //
+
+RUNNING the simulation/Testbench in Icarus Verilog:
+
+Go to the scripts directory and write "make rtl-tests"
+All logs will be saved in the log directory
+
+VCD dumps are coming soon
 
 RUNNING the simulation/Testbench in ModelSIM:
 

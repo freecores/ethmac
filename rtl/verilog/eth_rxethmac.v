@@ -198,7 +198,8 @@ assign MRxDEq5 = MRxD == 4'h5;
 
 
 // Rx State Machine module
-eth_rxstatem rxstatem1 (.MRxClk(MRxClk), .Reset(Reset), .MRxDV(MRxDV), .ByteCntEq0(ByteCntEq0), 
+eth_rxstatem #(.Tp(Tp))
+rxstatem1 (.MRxClk(MRxClk), .Reset(Reset), .MRxDV(MRxDV), .ByteCntEq0(ByteCntEq0), 
                         .ByteCntGreat2(ByteCntGreat2), .Transmitting(Transmitting), .MRxDEq5(MRxDEq5), 
                         .MRxDEqD(MRxDEqD), .IFGCounterEq24(IFGCounterEq24), .ByteCntMaxFrame(ByteCntMaxFrame), 
                         .StateData(StateData), .StateIdle(StateIdle), .StatePreamble(StatePreamble), 
@@ -207,7 +208,8 @@ eth_rxstatem rxstatem1 (.MRxClk(MRxClk), .Reset(Reset), .MRxDV(MRxDV), .ByteCntE
 
 
 // Rx Counters module
-eth_rxcounters rxcounters1 (.MRxClk(MRxClk), .Reset(Reset), .MRxDV(MRxDV), .StateIdle(StateIdle), 
+eth_rxcounters #(.Tp(Tp))
+rxcounters1 (.MRxClk(MRxClk), .Reset(Reset), .MRxDV(MRxDV), .StateIdle(StateIdle), 
                             .StateSFD(StateSFD), .StateData(StateData), .StateDrop(StateDrop), 
                             .StatePreamble(StatePreamble), .MRxDEqD(MRxDEqD), .DlyCrcEn(DlyCrcEn), 
                             .DlyCrcCnt(DlyCrcCnt), .Transmitting(Transmitting), .MaxFL(MaxFL), .r_IFG(r_IFG), 
@@ -221,7 +223,8 @@ eth_rxcounters rxcounters1 (.MRxClk(MRxClk), .Reset(Reset), .MRxDV(MRxDV), .Stat
 
 // Rx Address Check
 
-eth_rxaddrcheck rxaddrcheck1
+eth_rxaddrcheck #(.Tp(Tp))
+rxaddrcheck1
               (.MRxClk(MRxClk),         .Reset( Reset),             .RxData(RxData), 
                .Broadcast (Broadcast),  .r_Bro (r_Bro),             .r_Pro(r_Pro),
                .ByteCntEq6(ByteCntEq6), .ByteCntEq7(ByteCntEq7),    .ByteCntEq2(ByteCntEq2), 
@@ -244,7 +247,8 @@ assign Data_Crc[3] = MRxD[0];
 
 
 // Connecting module Crc
-eth_crc crcrx (.Clk(MRxClk), .Reset(Reset), .Data(Data_Crc), .Enable(Enable_Crc), .Initialize(Initialize_Crc), 
+eth_crc #(.Tp(Tp))
+crcrx (.Clk(MRxClk), .Reset(Reset), .Data(Data_Crc), .Enable(Enable_Crc), .Initialize(Initialize_Crc), 
                .Crc(Crc), .CrcError(CrcError)
               );
 

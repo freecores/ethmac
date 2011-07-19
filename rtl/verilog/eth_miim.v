@@ -430,17 +430,20 @@ assign LatchByte0_d2 = InProgress & ~WriteOp & BitCounter == 7'h3F;
 
 
 // Connecting the Clock Generator Module
-eth_clockgen clkgen(.Clk(Clk), .Reset(Reset), .Divider(Divider[7:0]), .MdcEn(MdcEn), .MdcEn_n(MdcEn_n), .Mdc(Mdc) 
+eth_clockgen #(.Tp(Tp))
+clkgen(.Clk(Clk), .Reset(Reset), .Divider(Divider[7:0]), .MdcEn(MdcEn), .MdcEn_n(MdcEn_n), .Mdc(Mdc) 
                    );
 
 // Connecting the Shift Register Module
-eth_shiftreg shftrg(.Clk(Clk), .Reset(Reset), .MdcEn_n(MdcEn_n), .Mdi(Mdi), .Fiad(Fiad), .Rgad(Rgad), 
+eth_shiftreg #(.Tp(Tp))
+shftrg(.Clk(Clk), .Reset(Reset), .MdcEn_n(MdcEn_n), .Mdi(Mdi), .Fiad(Fiad), .Rgad(Rgad), 
                     .CtrlData(CtrlData), .WriteOp(WriteOp), .ByteSelect(ByteSelect), .LatchByte(LatchByte), 
                     .ShiftedBit(ShiftedBit), .Prsd(Prsd), .LinkFail(LinkFail)
                    );
 
 // Connecting the Output Control Module
-eth_outputcontrol outctrl(.Clk(Clk), .Reset(Reset), .MdcEn_n(MdcEn_n), .InProgress(InProgress), 
+eth_outputcontrol #(.Tp(Tp))
+outctrl(.Clk(Clk), .Reset(Reset), .MdcEn_n(MdcEn_n), .InProgress(InProgress), 
                           .ShiftedBit(ShiftedBit), .BitCounter(BitCounter), .WriteOp(WriteOp), .NoPre(NoPre), 
                           .Mdo(Mdo), .MdoEn(MdoEn)
                          );

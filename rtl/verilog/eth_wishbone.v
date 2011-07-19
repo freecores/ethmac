@@ -309,6 +309,12 @@ module eth_wishbone
 
 
 parameter Tp = 1;
+parameter TX_FIFO_DATA_WIDTH = `ETH_TX_FIFO_DATA_WIDTH;
+parameter TX_FIFO_DEPTH      = `ETH_TX_FIFO_DEPTH;
+parameter TX_FIFO_CNT_WIDTH  = `ETH_TX_FIFO_CNT_WIDTH;
+parameter RX_FIFO_DATA_WIDTH = `ETH_RX_FIFO_DATA_WIDTH;
+parameter RX_FIFO_DEPTH      = `ETH_RX_FIFO_DEPTH;
+parameter RX_FIFO_CNT_WIDTH  = `ETH_RX_FIFO_CNT_WIDTH;
 
 
 // WISHBONE common
@@ -1006,8 +1012,8 @@ end
 
 
 assign MasterAccessFinished = m_wb_ack_i | m_wb_err_i;
-wire [`ETH_TX_FIFO_CNT_WIDTH-1:0] txfifo_cnt;
-wire [`ETH_RX_FIFO_CNT_WIDTH-1:0] rxfifo_cnt;
+wire [TX_FIFO_CNT_WIDTH-1:0] txfifo_cnt;
+wire [RX_FIFO_CNT_WIDTH-1:0] rxfifo_cnt;
 reg  [`ETH_BURST_CNT_WIDTH-1:0] tx_burst_cnt;
 reg  [`ETH_BURST_CNT_WIDTH-1:0] rx_burst_cnt;
 
@@ -1158,7 +1164,7 @@ begin
             cyc_cleared<=#Tp 1'b1;
             IncrTxPointer<=#Tp 1'b0;
             tx_burst_cnt<=#Tp 0;
-            tx_burst_en<=#Tp txfifo_cnt<(`ETH_TX_FIFO_DEPTH-`ETH_BURST_LENGTH) & (TxLength>(`ETH_BURST_LENGTH*4+4));
+            tx_burst_en<=#Tp txfifo_cnt<(TX_FIFO_DEPTH-`ETH_BURST_LENGTH) & (TxLength>(`ETH_BURST_LENGTH*4+4));
             rx_burst_cnt<=#Tp 0;
             rx_burst_en<=#Tp MasterWbRX ? enough_data_in_rxfifo_for_burst_plus1 : enough_data_in_rxfifo_for_burst;  // Counter is not decremented, yet, so plus1 is used.
             `ifdef ETH_WISHBONE_B3
@@ -1182,7 +1188,7 @@ begin
         8'b00_00_00_00:             // whatever and no master read or write is needed (ack or err comes finishing previous access)
           begin
             tx_burst_cnt<=#Tp 0;
-            tx_burst_en<=#Tp txfifo_cnt<(`ETH_TX_FIFO_DEPTH-`ETH_BURST_LENGTH) & (TxLength>(`ETH_BURST_LENGTH*4+4));
+            tx_burst_en<=#Tp txfifo_cnt<(TX_FIFO_DEPTH-`ETH_BURST_LENGTH) & (TxLength>(`ETH_BURST_LENGTH*4+4));
           end
         default:                    // Don't touch
           begin
@@ -1201,7 +1207,10 @@ wire TxFifoClear;
 
 assign TxFifoClear = (TxAbortPacket | TxRetryPacket);
 
-eth_fifo #(`ETH_TX_FIFO_DATA_WIDTH, `ETH_TX_FIFO_DEPTH, `ETH_TX_FIFO_CNT_WIDTH)
+eth_fifo #(.DATA_WIDTH(TX_FIFO_DATA_WIDTH),
+	   .DEPTH(TX_FIFO_DEPTH),
+	   .CNT_WIDTH(TX_FIFO_CNT_WIDTH),
+	   .Tp(Tp))
 tx_fifo ( .data_in(m_wb_dat_i),                             .data_out(TxData_wb), 
           .clk(WB_CLK_I),                                   .reset(Reset), 
           .write(MasterWbTX & m_wb_ack_i),                  .read(ReadTxDataFromFifo_wb & ~TxBufferEmpty),
@@ -2196,8 +2205,10 @@ end
 
 assign RxFifoReset = SyncRxStartFrm_q & ~SyncRxStartFrm_q2;
 
-
-eth_fifo #(`ETH_RX_FIFO_DATA_WIDTH, `ETH_RX_FIFO_DEPTH, `ETH_RX_FIFO_CNT_WIDTH)
+eth_fifo #(.DATA_WIDTH(RX_FIFO_DATA_WIDTH),
+	   .DEPTH(RX_FIFO_DEPTH),
+	   .CNT_WIDTH(RX_FIFO_CNT_WIDTH),
+	   .Tp(Tp))
 rx_fifo (.data_in(RxDataLatched2),                      .data_out(m_wb_dat_o), 
          .clk(WB_CLK_I),                                .reset(Reset), 
          .write(WriteRxDataToFifo_wb & ~RxBufferFull),  .read(MasterWbRX & m_wb_ack_i), 

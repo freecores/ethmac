@@ -245,7 +245,8 @@ assign CrcEnOut = CrcEnIn | SendingCtrlFrm;
 
 
 // Connecting receivecontrol module
-eth_receivecontrol receivecontrol1 
+eth_receivecontrol #(.Tp(Tp))
+receivecontrol1 
 (
  .MTxClk(MTxClk), .MRxClk(MRxClk), .TxReset(TxReset), .RxReset(RxReset), .RxData(RxData), 
  .RxValid(RxValid), .RxStartFrm(RxStartFrm), .RxEndFrm(RxEndFrm), .RxFlow(RxFlow), 
@@ -257,7 +258,8 @@ eth_receivecontrol receivecontrol1
 );
 
 
-eth_transmitcontrol transmitcontrol1
+eth_transmitcontrol #(.Tp(Tp))
+transmitcontrol1
 (
  .MTxClk(MTxClk), .TxReset(TxReset), .TxUsedDataIn(TxUsedDataIn), .TxUsedDataOut(TxUsedDataOut), 
  .TxDoneIn(TxDoneIn), .TxAbortIn(TxAbortIn), .TxStartFrmIn(TxStartFrmIn), .TPauseRq(TPauseRq), 

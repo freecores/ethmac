@@ -279,6 +279,12 @@ module eth_top
 
 
 parameter Tp = 1;
+parameter TX_FIFO_DATA_WIDTH = `ETH_TX_FIFO_DATA_WIDTH;
+parameter TX_FIFO_DEPTH      = `ETH_TX_FIFO_DEPTH;
+parameter TX_FIFO_CNT_WIDTH  = `ETH_TX_FIFO_CNT_WIDTH;
+parameter RX_FIFO_DATA_WIDTH = `ETH_RX_FIFO_DATA_WIDTH;
+parameter RX_FIFO_DEPTH      = `ETH_RX_FIFO_DEPTH;
+parameter RX_FIFO_CNT_WIDTH  = `ETH_RX_FIFO_CNT_WIDTH;
 
 
 // WISHBONE common
@@ -383,7 +389,8 @@ reg             TPauseRq;
 
 
 // Connecting Miim module
-eth_miim miim1
+eth_miim #(.Tp(Tp))
+miim1
 (
   .Clk(wb_clk_i),                         .Reset(wb_rst_i),                   .Divider(r_ClkDiv), 
   .NoPre(r_MiiNoPre),                     .CtrlData(r_CtrlData),              .Rgad(r_RGAD), 
@@ -542,7 +549,8 @@ assign temp_wb_err_o = wb_stb_i & wb_cyc_i & (~ByteSelected | CsMiss);
 
 
 // Connecting Ethernet registers
-eth_registers ethreg1
+eth_registers #(.Tp(Tp))
+ethreg1
 (
   .DataIn(wb_dat_i),                      .Address(wb_adr_i[9:2]),                    .Rw(wb_we_i), 
   .Cs(RegCs),                             .Clk(wb_clk_i),                             .Reset(wb_rst_i), 
@@ -599,7 +607,8 @@ wire        StatePreamble;
 wire  [1:0] StateData; 
 
 // Connecting MACControl
-eth_maccontrol maccontrol1
+eth_maccontrol #(.Tp(Tp))
+maccontrol1
 (
   .MTxClk(mtx_clk_pad_i),                       .TPauseRq(TPauseRq), 
   .TxPauseTV(r_TxPauseTV),                      .TxDataIn(TxData), 
@@ -652,7 +661,8 @@ assign MRxD_Lb[3:0] = r_LoopBck? mtxd_pad_o[3:0] : mrxd_pad_i[3:0];
 
 
 // Connecting TxEthMAC
-eth_txethmac txethmac1
+eth_txethmac #(.Tp(Tp))
+txethmac1
 (
   .MTxClk(mtx_clk_pad_i),             .Reset(wb_rst_i),                   .CarrierSense(TxCarrierSense), 
   .Collision(Collision),              .TxData(TxDataOut),                 .TxStartFrm(TxStartFrmOut), 
@@ -686,7 +696,8 @@ wire          AddressMiss;
 
 
 // Connecting RxEthMAC
-eth_rxethmac rxethmac1
+eth_rxethmac #(.Tp(Tp))
+rxethmac1
 (
   .MRxClk(mrx_clk_pad_i),               .MRxDV(MRxDV_Lb),                     .MRxD(MRxD_Lb),
   .Transmitting(Transmitting),          .HugEn(r_HugEn),                      .DlyCrcEn(r_DlyCrcEn), 
@@ -882,7 +893,14 @@ end
 
 
 // Connecting Wishbone module
-eth_wishbone wishbone
+eth_wishbone #(.Tp(Tp),
+	       .TX_FIFO_DATA_WIDTH(TX_FIFO_DATA_WIDTH),
+	       .TX_FIFO_DEPTH     (TX_FIFO_DEPTH),
+	       .TX_FIFO_CNT_WIDTH (TX_FIFO_CNT_WIDTH),
+	       .RX_FIFO_DATA_WIDTH(RX_FIFO_DATA_WIDTH),
+	       .RX_FIFO_DEPTH     (RX_FIFO_DEPTH),
+	       .RX_FIFO_CNT_WIDTH (RX_FIFO_CNT_WIDTH))
+wishbone
 (
   .WB_CLK_I(wb_clk_i),                .WB_DAT_I(wb_dat_i), 
   .WB_DAT_O(BD_WB_DAT_O), 
@@ -941,7 +959,8 @@ eth_wishbone wishbone
 assign m_wb_adr_o = {m_wb_adr_tmp, 2'h0};
 
 // Connecting MacStatus module
-eth_macstatus macstatus1 
+eth_macstatus #(.Tp(Tp))
+macstatus1 
 (
   .MRxClk(mrx_clk_pad_i),             .Reset(wb_rst_i),
   .ReceiveEnd(ReceiveEnd),            .ReceivedPacketGood(ReceivedPacketGood),     .ReceivedLengthOK(ReceivedLengthOK), 

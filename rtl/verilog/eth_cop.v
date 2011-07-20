@@ -147,8 +147,17 @@ reg           m1_wb_err_o;
 reg           m2_wb_err_o;
 
 wire m_wb_access_finished;
-wire m1_req = m1_wb_cyc_i & m1_wb_stb_i & (`M1_ADDRESSED_S1 | `M1_ADDRESSED_S2);
-wire m2_req = m2_wb_cyc_i & m2_wb_stb_i & (`M2_ADDRESSED_S1 | `M2_ADDRESSED_S2);
+wire m1_addressed_s1 = (m1_wb_adr_i >= `ETH_BASE) &
+                       (m1_wb_adr_i < (`ETH_BASE + `ETH_WIDTH));
+wire m1_addressed_s2 = (m1_wb_adr_i >= `MEMORY_BASE) &
+                       (m1_wb_adr_i < (`MEMORY_BASE + `MEMORY_WIDTH));
+wire m2_addressed_s1 = (m2_wb_adr_i >= `ETH_BASE) &
+                       (m2_wb_adr_i < (`ETH_BASE + `ETH_WIDTH));
+wire m2_addressed_s2 = (m2_wb_adr_i >= `MEMORY_BASE) &
+                       (m2_wb_adr_i < (`MEMORY_BASE + `MEMORY_WIDTH));
+   
+wire m1_req = m1_wb_cyc_i & m1_wb_stb_i & (m1_addressed_s1 | m1_addressed_s2);
+wire m2_req = m2_wb_cyc_i & m2_wb_stb_i & (m2_addressed_s1 | m2_addressed_s2);
 
 always @ (posedge wb_clk_i or posedge wb_rst_i)
 begin
@@ -175,7 +184,7 @@ begin
         5'b00_10_0, 5'b00_11_0 :
           begin
             m1_in_progress <=#Tp 1'b1;  // idle: m1 or (m1 & m2) want access: m1 -> m
-            if(`M1_ADDRESSED_S1)
+            if(m1_addressed_s1)
               begin
                 s1_wb_adr_o <=#Tp m1_wb_adr_i;
                 s1_wb_sel_o <=#Tp m1_wb_sel_i;
@@ -184,7 +193,7 @@ begin
                 s1_wb_cyc_o <=#Tp 1'b1;
                 s1_wb_stb_o <=#Tp 1'b1;
               end
-            else if(`M1_ADDRESSED_S2)
+            else if(m1_addressed_s2)
               begin
                 s2_wb_adr_o <=#Tp m1_wb_adr_i;
                 s2_wb_sel_o <=#Tp m1_wb_sel_i;
@@ -199,7 +208,7 @@ begin
         5'b00_01_0 :
           begin
             m2_in_progress <=#Tp 1'b1;  // idle: m2 wants access: m2 -> m
-            if(`M2_ADDRESSED_S1)
+            if(m2_addressed_s1)
               begin
                 s1_wb_adr_o <=#Tp m2_wb_adr_i;
                 s1_wb_sel_o <=#Tp m2_wb_sel_i;
@@ -208,7 +217,7 @@ begin
                 s1_wb_cyc_o <=#Tp 1'b1;
                 s1_wb_stb_o <=#Tp 1'b1;
               end
-            else if(`M2_ADDRESSED_S2)
+            else if(m2_addressed_s2)
               begin
                 s2_wb_adr_o <=#Tp m2_wb_adr_i;
                 s2_wb_sel_o <=#Tp m2_wb_sel_i;
@@ -223,12 +232,12 @@ begin
         5'b10_10_1, 5'b10_11_1 :
           begin
             m1_in_progress <=#Tp 1'b0;  // m1 in progress. Cycle is finished. Send ack or err to m1.
-            if(`M1_ADDRESSED_S1)
+            if(m1_addressed_s1)
               begin
                 s1_wb_cyc_o <=#Tp 1'b0;
                 s1_wb_stb_o <=#Tp 1'b0;
               end
-            else if(`M1_ADDRESSED_S2)
+            else if(m1_addressed_s2)
               begin
                 s2_wb_cyc_o <=#Tp 1'b0;
                 s2_wb_stb_o <=#Tp 1'b0;
@@ -237,12 +246,12 @@ begin
         5'b01_01_1, 5'b01_11_1 :
           begin
             m2_in_progress <=#Tp 1'b0;  // m2 in progress. Cycle is finished. Send ack or err to m2.
-            if(`M2_ADDRESSED_S1)
+            if(m2_addressed_s1)
               begin
                 s1_wb_cyc_o <=#Tp 1'b0;
                 s1_wb_stb_o <=#Tp 1'b0;
               end
-            else if(`M2_ADDRESSED_S2)
+            else if(m2_addressed_s2)
               begin
                 s2_wb_cyc_o <=#Tp 1'b0;
                 s2_wb_stb_o <=#Tp 1'b0;
@@ -253,15 +262,15 @@ begin
 end
 
 // Generating Ack for master 1
-always @ (m1_in_progress or m1_wb_adr_i or s1_wb_ack_i or s2_wb_ack_i or s1_wb_dat_i or s2_wb_dat_i or `M1_ADDRESSED_S1 or `M1_ADDRESSED_S2)
+always @ (m1_in_progress or m1_wb_adr_i or s1_wb_ack_i or s2_wb_ack_i or s1_wb_dat_i or s2_wb_dat_i or m1_addressed_s1 or m1_addressed_s2)
 begin
   if(m1_in_progress)
     begin
-      if(`M1_ADDRESSED_S1) begin
+      if(m1_addressed_s1) begin
         m1_wb_ack_o <= s1_wb_ack_i;
         m1_wb_dat_o <= s1_wb_dat_i;
       end
-      else if(`M1_ADDRESSED_S2) begin
+      else if(m1_addressed_s2) begin
         m1_wb_ack_o <= s2_wb_ack_i;
         m1_wb_dat_o <= s2_wb_dat_i;
       end
@@ -272,15 +281,15 @@ end
 
 
 // Generating Ack for master 2
-always @ (m2_in_progress or m2_wb_adr_i or s1_wb_ack_i or s2_wb_ack_i or s1_wb_dat_i or s2_wb_dat_i or `M2_ADDRESSED_S1 or `M2_ADDRESSED_S2)
+always @ (m2_in_progress or m2_wb_adr_i or s1_wb_ack_i or s2_wb_ack_i or s1_wb_dat_i or s2_wb_dat_i or m2_addressed_s1 or m2_addressed_s2)
 begin
   if(m2_in_progress)
     begin
-      if(`M2_ADDRESSED_S1) begin
+      if(m2_addressed_s1) begin
         m2_wb_ack_o <= s1_wb_ack_i;
         m2_wb_dat_o <= s1_wb_dat_i;
       end
-      else if(`M2_ADDRESSED_S2) begin
+      else if(m2_addressed_s2) begin
         m2_wb_ack_o <= s2_wb_ack_i;
         m2_wb_dat_o <= s2_wb_dat_i;
       end
@@ -291,16 +300,16 @@ end
 
 
 // Generating Err for master 1
-always @ (m1_in_progress or m1_wb_adr_i or s1_wb_err_i or s2_wb_err_i or `M2_ADDRESSED_S1 or `M2_ADDRESSED_S2 or
+always @ (m1_in_progress or m1_wb_adr_i or s1_wb_err_i or s2_wb_err_i or m2_addressed_s1 or m2_addressed_s2 or
           m1_wb_cyc_i or m1_wb_stb_i)
 begin
   if(m1_in_progress)  begin
-    if(`M1_ADDRESSED_S1)
+    if(m1_addressed_s1)
       m1_wb_err_o <= s1_wb_err_i;
-    else if(`M1_ADDRESSED_S2)
+    else if(m1_addressed_s2)
       m1_wb_err_o <= s2_wb_err_i;
   end
-  else if(m1_wb_cyc_i & m1_wb_stb_i & ~`M1_ADDRESSED_S1 & ~`M1_ADDRESSED_S2)
+  else if(m1_wb_cyc_i & m1_wb_stb_i & ~m1_addressed_s1 & ~m1_addressed_s2)
     m1_wb_err_o <= 1'b1;
   else
     m1_wb_err_o <= 1'b0;
@@ -308,16 +317,16 @@ end
 
 
 // Generating Err for master 2
-always @ (m2_in_progress or m2_wb_adr_i or s1_wb_err_i or s2_wb_err_i or `M2_ADDRESSED_S1 or `M2_ADDRESSED_S2 or
+always @ (m2_in_progress or m2_wb_adr_i or s1_wb_err_i or s2_wb_err_i or m2_addressed_s1 or m2_addressed_s2 or
           m2_wb_cyc_i or m2_wb_stb_i)
 begin
   if(m2_in_progress)  begin
-    if(`M2_ADDRESSED_S1)
+    if(m2_addressed_s1)
       m2_wb_err_o <= s1_wb_err_i;
-    else if(`M2_ADDRESSED_S2)
+    else if(m2_addressed_s2)
       m2_wb_err_o <= s2_wb_err_i;
   end
-  else if(m2_wb_cyc_i & m2_wb_stb_i & ~`M2_ADDRESSED_S1 & ~`M2_ADDRESSED_S2)
+  else if(m2_wb_cyc_i & m2_wb_stb_i & ~m2_addressed_s1 & ~m2_addressed_s2)
     m2_wb_err_o <= 1'b1;
   else
     m2_wb_err_o <= 1'b0;

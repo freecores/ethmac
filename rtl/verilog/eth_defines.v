@@ -330,12 +330,3 @@
 // WISHBONE interface is Revision B3 compliant (uncomment when needed)
 //`define ETH_WISHBONE_B3
 
-
-// Following defines are needed when eth_cop.v is used. Otherwise they may be deleted.
-`define ETH_BASE              32'hd0000000
-`define ETH_WIDTH             32'h800
-`define MEMORY_BASE           32'h2000
-`define MEMORY_WIDTH          32'h10000
-
-// Previous defines are only needed for eth_cop.v
-

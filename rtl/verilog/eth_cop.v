@@ -61,7 +61,6 @@
 //
 //
 
-`include "eth_defines.v"
 `include "timescale.v"
 
 module eth_cop
@@ -91,7 +90,11 @@ module eth_cop
 );
 
 parameter Tp=1;
-
+parameter ETH_BASE     = 32'hd0000000;
+parameter ETH_WIDTH    = 32'h800;
+parameter MEMORY_BASE  = 32'h2000;
+parameter MEMORY_WIDTH = 32'h10000;
+		 
 // WISHBONE common
 input wb_clk_i, wb_rst_i;
   
@@ -147,14 +150,14 @@ reg           m1_wb_err_o;
 reg           m2_wb_err_o;
 
 wire m_wb_access_finished;
-wire m1_addressed_s1 = (m1_wb_adr_i >= `ETH_BASE) &
-                       (m1_wb_adr_i < (`ETH_BASE + `ETH_WIDTH));
-wire m1_addressed_s2 = (m1_wb_adr_i >= `MEMORY_BASE) &
-                       (m1_wb_adr_i < (`MEMORY_BASE + `MEMORY_WIDTH));
-wire m2_addressed_s1 = (m2_wb_adr_i >= `ETH_BASE) &
-                       (m2_wb_adr_i < (`ETH_BASE + `ETH_WIDTH));
-wire m2_addressed_s2 = (m2_wb_adr_i >= `MEMORY_BASE) &
-                       (m2_wb_adr_i < (`MEMORY_BASE + `MEMORY_WIDTH));
+wire m1_addressed_s1 = (m1_wb_adr_i >= ETH_BASE) &
+                       (m1_wb_adr_i < (ETH_BASE + ETH_WIDTH));
+wire m1_addressed_s2 = (m1_wb_adr_i >= MEMORY_BASE) &
+                       (m1_wb_adr_i < (MEMORY_BASE + MEMORY_WIDTH));
+wire m2_addressed_s1 = (m2_wb_adr_i >= ETH_BASE) &
+                       (m2_wb_adr_i < (ETH_BASE + ETH_WIDTH));
+wire m2_addressed_s2 = (m2_wb_adr_i >= MEMORY_BASE) &
+                       (m2_wb_adr_i < (MEMORY_BASE + MEMORY_WIDTH));
    
 wire m1_req = m1_wb_cyc_i & m1_wb_stb_i & (m1_addressed_s1 | m1_addressed_s2);
 wire m2_req = m2_wb_cyc_i & m2_wb_stb_i & (m2_addressed_s1 | m2_addressed_s2);

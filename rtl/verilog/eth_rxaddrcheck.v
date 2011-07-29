@@ -82,7 +82,6 @@ module eth_rxaddrcheck(MRxClk,  Reset, RxData, Broadcast ,r_Bro ,r_Pro,
                        ControlFrmAddressOK
                       );
 
-parameter Tp = 1;
 
   input        MRxClk; 
   input        Reset; 
@@ -138,11 +137,11 @@ assign RxCheckEn   = | StateData;
 always @ (posedge MRxClk or posedge Reset)
 begin
   if(Reset)
-    RxAbort <= #Tp 1'b0;
+    RxAbort <=  1'b0;
   else if(RxAddressInvalid & ByteCntEq7 & RxCheckEn)
-    RxAbort <= #Tp 1'b1;
+    RxAbort <=  1'b1;
   else
-    RxAbort <= #Tp 1'b0;
+    RxAbort <=  1'b0;
 end
  
 
@@ -150,11 +149,11 @@ end
 always @ (posedge MRxClk or posedge Reset)
 begin
   if(Reset)
-    AddressMiss <= #Tp 1'b0;
+    AddressMiss <=  1'b0;
   else if(ByteCntEq0)
-    AddressMiss <= #Tp 1'b0;
+    AddressMiss <=  1'b0;
   else if(ByteCntEq7 & RxCheckEn)
-    AddressMiss <= #Tp (~(UnicastOK | BroadcastOK | MulticastOK | (PassAll & ControlFrmAddressOK)));
+    AddressMiss <=  (~(UnicastOK | BroadcastOK | MulticastOK | (PassAll & ControlFrmAddressOK)));
 end
 
 
@@ -162,11 +161,11 @@ end
 always @ (posedge MRxClk or posedge Reset)
 begin
   if(Reset)
-    MulticastOK <= #Tp 1'b0;
+    MulticastOK <=  1'b0;
   else if(RxEndFrm | RxAbort)
-    MulticastOK <= #Tp 1'b0;
+    MulticastOK <=  1'b0;
   else if(CrcHashGood & Multicast)
-    MulticastOK <= #Tp HashBit;
+    MulticastOK <=  HashBit;
 end
  
  
@@ -175,28 +174,28 @@ end
 always @ (posedge MRxClk or posedge Reset)
 begin
   if(Reset)
-    UnicastOK <= #Tp 1'b0;
+    UnicastOK <=  1'b0;
   else
   if(RxCheckEn & ByteCntEq2)
-    UnicastOK <= #Tp   RxData[7:0] == MAC[47:40];
+    UnicastOK <=    RxData[7:0] == MAC[47:40];
   else
   if(RxCheckEn & ByteCntEq3)
-    UnicastOK <= #Tp ( RxData[7:0] == MAC[39:32]) & UnicastOK;
+    UnicastOK <=  ( RxData[7:0] == MAC[39:32]) & UnicastOK;
   else
   if(RxCheckEn & ByteCntEq4)
-    UnicastOK <= #Tp ( RxData[7:0] == MAC[31:24]) & UnicastOK;
+    UnicastOK <=  ( RxData[7:0] == MAC[31:24]) & UnicastOK;
   else
   if(RxCheckEn & ByteCntEq5)
-    UnicastOK <= #Tp ( RxData[7:0] == MAC[23:16]) & UnicastOK;
+    UnicastOK <=  ( RxData[7:0] == MAC[23:16]) & UnicastOK;
   else
   if(RxCheckEn & ByteCntEq6)
-    UnicastOK <= #Tp ( RxData[7:0] == MAC[15:8])  & UnicastOK;
+    UnicastOK <=  ( RxData[7:0] == MAC[15:8])  & UnicastOK;
   else
   if(RxCheckEn & ByteCntEq7)
-    UnicastOK <= #Tp ( RxData[7:0] == MAC[7:0])   & UnicastOK;
+    UnicastOK <=  ( RxData[7:0] == MAC[7:0])   & UnicastOK;
   else
   if(RxEndFrm | RxAbort)
-    UnicastOK <= #Tp 1'b0;
+    UnicastOK <=  1'b0;
 end
    
 assign IntHash = (CrcHash[5])? HASH1 : HASH0;

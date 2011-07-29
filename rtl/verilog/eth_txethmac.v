@@ -103,8 +103,6 @@ module eth_txethmac (MTxClk, Reset, TxStartFrm, TxEndFrm, TxUnderRun, TxData, Ca
 
                     );
 
-parameter Tp = 1;
-
 
 input MTxClk;                   // Transmit clock (from PHY)
 input Reset;                    // Reset
@@ -227,14 +225,14 @@ assign StartTxAbort = TooBig | UnderRun | ExcessiveDeferOccured | LateCollision 
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    StopExcessiveDeferOccured <= #Tp 1'b0;
+    StopExcessiveDeferOccured <=  1'b0;
   else
     begin
       if(~TxStartFrm)
-        StopExcessiveDeferOccured <= #Tp 1'b0;
+        StopExcessiveDeferOccured <=  1'b0;
       else
       if(ExcessiveDeferOccured)
-        StopExcessiveDeferOccured <= #Tp 1'b1;
+        StopExcessiveDeferOccured <=  1'b1;
     end
 end
 
@@ -243,14 +241,14 @@ end
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    ColWindow <= #Tp 1'b1;
+    ColWindow <=  1'b1;
   else
     begin  
       if(~Collision & ByteCnt[5:0] == CollValid[5:0] & (StateData[1] | StatePAD & NibCnt[0] | StateFCS & NibCnt[0]))
-        ColWindow <= #Tp 1'b0;
+        ColWindow <=  1'b0;
       else
       if(StateIdle | StateIPG)
-        ColWindow <= #Tp 1'b1;
+        ColWindow <=  1'b1;
     end
 end
 
@@ -259,14 +257,14 @@ end
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    StatusLatch <= #Tp 1'b0;
+    StatusLatch <=  1'b0;
   else
     begin
       if(~TxStartFrm)
-        StatusLatch <= #Tp 1'b0;
+        StatusLatch <=  1'b0;
       else
       if(ExcessiveDeferOccured | StateIdle)
-        StatusLatch <= #Tp 1'b1;
+        StatusLatch <=  1'b1;
      end
 end
 
@@ -275,9 +273,9 @@ end
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    TxUsedData <= #Tp 1'b0;
+    TxUsedData <=  1'b0;
   else
-    TxUsedData <= #Tp |StartData;
+    TxUsedData <=  |StartData;
 end
 
 
@@ -285,14 +283,14 @@ end
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    TxDone <= #Tp 1'b0;
+    TxDone <=  1'b0;
   else
     begin
       if(TxStartFrm & ~StatusLatch)
-        TxDone <= #Tp 1'b0;
+        TxDone <=  1'b0;
       else
       if(StartTxDone)
-        TxDone <= #Tp 1'b1;
+        TxDone <=  1'b1;
     end
 end
 
@@ -301,14 +299,14 @@ end
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    TxRetry <= #Tp 1'b0;
+    TxRetry <=  1'b0;
   else
     begin
       if(TxStartFrm & ~StatusLatch)
-        TxRetry <= #Tp 1'b0;
+        TxRetry <=  1'b0;
       else
       if(StartTxRetry)
-        TxRetry <= #Tp 1'b1;
+        TxRetry <=  1'b1;
      end
 end                                    
 
@@ -317,14 +315,14 @@ end
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    TxAbort <= #Tp 1'b0;
+    TxAbort <=  1'b0;
   else
     begin
       if(TxStartFrm & ~StatusLatch & ~ExcessiveDeferOccured)
-        TxAbort <= #Tp 1'b0;
+        TxAbort <=  1'b0;
       else
       if(StartTxAbort)
-        TxAbort <= #Tp 1'b1;
+        TxAbort <=  1'b1;
     end
 end
 
@@ -333,15 +331,15 @@ end
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    RetryCnt[3:0] <= #Tp 4'h0;
+    RetryCnt[3:0] <=  4'h0;
   else
     begin
       if(ExcessiveDeferOccured | UnderRun | TooBig | StartTxDone | TxUnderRun 
           | StateJam & NibCntEq7 & (~ColWindow | RetryMax))
-        RetryCnt[3:0] <= #Tp 4'h0;
+        RetryCnt[3:0] <=  4'h0;
       else
       if(StateJam & NibCntEq7 & ColWindow & (RandomEq0 | NoBckof) | StateBackOff & RandomEqByteCnt)
-        RetryCnt[3:0] <= #Tp RetryCnt[3:0] + 1'b1;
+        RetryCnt[3:0] <=  RetryCnt[3:0] + 1'b1;
     end
 end
 
@@ -379,9 +377,9 @@ end
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    MTxEn <= #Tp 1'b0;
+    MTxEn <=  1'b0;
   else
-    MTxEn <= #Tp StatePreamble | (|StateData) | StatePAD | StateFCS | StateJam;
+    MTxEn <=  StatePreamble | (|StateData) | StatePAD | StateFCS | StateJam;
 end
 
 
@@ -389,9 +387,9 @@ end
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    MTxD[3:0] <= #Tp 4'h0;
+    MTxD[3:0] <=  4'h0;
   else
-    MTxD[3:0] <= #Tp MTxD_d[3:0];
+    MTxD[3:0] <=  MTxD_d[3:0];
 end
 
 
@@ -399,9 +397,9 @@ end
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    MTxErr <= #Tp 1'b0;
+    MTxErr <=  1'b0;
   else
-    MTxErr <= #Tp TooBig | UnderRun;
+    MTxErr <=  TooBig | UnderRun;
 end
 
 
@@ -409,9 +407,9 @@ end
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    WillTransmit <= #Tp  1'b0;
+    WillTransmit <=   1'b0;
   else
-    WillTransmit <= #Tp StartPreamble | StatePreamble | (|StateData) | StatePAD | StateFCS | StateJam;
+    WillTransmit <=  StartPreamble | StatePreamble | (|StateData) | StatePAD | StateFCS | StateJam;
 end
 
 
@@ -423,20 +421,19 @@ always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
     begin
-      PacketFinished <= #Tp 1'b0;
-      PacketFinished_q  <= #Tp 1'b0;
+      PacketFinished <=  1'b0;
+      PacketFinished_q  <=  1'b0;
     end
   else
     begin
-      PacketFinished <= #Tp PacketFinished_d;
-      PacketFinished_q  <= #Tp PacketFinished;
+      PacketFinished <=  PacketFinished_d;
+      PacketFinished_q  <=  PacketFinished;
     end
 end
 
 
 // Connecting module Counters
-eth_txcounters #(.Tp(Tp))
-txcounters1 (.StatePreamble(StatePreamble), .StateIPG(StateIPG), .StateData(StateData), 
+eth_txcounters txcounters1 (.StatePreamble(StatePreamble), .StateIPG(StateIPG), .StateData(StateData), 
                             .StatePAD(StatePAD), .StateFCS(StateFCS), .StateJam(StateJam), .StateBackOff(StateBackOff), 
                             .StateDefer(StateDefer), .StateIdle(StateIdle), .StartDefer(StartDefer), .StartIPG(StartIPG), 
                             .StartFCS(StartFCS), .StartJam(StartJam), .TxStartFrm(TxStartFrm), .MTxClk(MTxClk), 
@@ -449,8 +446,7 @@ txcounters1 (.StatePreamble(StatePreamble), .StateIPG(StateIPG), .StateData(Stat
 
 
 // Connecting module StateM
-eth_txstatem #(.Tp(Tp))
-txstatem1 (.MTxClk(MTxClk), .Reset(Reset), .ExcessiveDefer(ExcessiveDefer), .CarrierSense(CarrierSense), 
+eth_txstatem txstatem1 (.MTxClk(MTxClk), .Reset(Reset), .ExcessiveDefer(ExcessiveDefer), .CarrierSense(CarrierSense), 
                         .NibCnt(NibCnt[6:0]), .IPGT(IPGT), .IPGR1(IPGR1), .IPGR2(IPGR2), .FullD(FullD), 
                         .TxStartFrm(TxStartFrm), .TxEndFrm(TxEndFrm), .TxUnderRun(TxUnderRun), .Collision(Collision), 
                         .UnderRun(UnderRun), .StartTxDone(StartTxDone), .TooBig(TooBig), .NibCntEq7(NibCntEq7), 
@@ -479,15 +475,13 @@ assign Initialize_Crc = StateIdle | StatePreamble | (|DlyCrcCnt);
 
 
 // Connecting module Crc
-eth_crc #(.Tp(Tp))
-txcrc (.Clk(MTxClk), .Reset(Reset), .Data(Data_Crc), .Enable(Enable_Crc), .Initialize(Initialize_Crc), 
+eth_crc txcrc (.Clk(MTxClk), .Reset(Reset), .Data(Data_Crc), .Enable(Enable_Crc), .Initialize(Initialize_Crc), 
                .Crc(Crc), .CrcError(CrcError)
               );
 
 
 // Connecting module Random
-eth_random #(.Tp(Tp))
-random1 (.MTxClk(MTxClk), .Reset(Reset), .StateJam(StateJam), .StateJam_q(StateJam_q), .RetryCnt(RetryCnt), 
+eth_random random1 (.MTxClk(MTxClk), .Reset(Reset), .StateJam(StateJam), .StateJam_q(StateJam_q), .RetryCnt(RetryCnt), 
                     .NibCnt(NibCnt), .ByteCnt(ByteCnt[9:0]), .RandomEq0(RandomEq0), .RandomEqByteCnt(RandomEqByteCnt));
 
 

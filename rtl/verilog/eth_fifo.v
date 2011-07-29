@@ -65,8 +65,6 @@ parameter DATA_WIDTH    = 32;
 parameter DEPTH         = 8;
 parameter CNT_WIDTH     = 4;
 
-parameter Tp            = 1;
-
 input                     clk;
 input                     reset;
 input                     write;
@@ -98,40 +96,40 @@ reg     [CNT_WIDTH-2:0]   write_pointer;
 always @ (posedge clk or posedge reset)
 begin
   if(reset)
-    cnt <=#Tp 0;
+    cnt <= 0;
   else
   if(clear)
-    cnt <=#Tp { {(CNT_WIDTH-1){1'b0}}, read^write};
+    cnt <= { {(CNT_WIDTH-1){1'b0}}, read^write};
   else
   if(read ^ write)
     if(read)
-      cnt <=#Tp cnt - 1'b1;
+      cnt <= cnt - 1'b1;
     else
-      cnt <=#Tp cnt + 1'b1;
+      cnt <= cnt + 1'b1;
 end
 
 always @ (posedge clk or posedge reset)
 begin
   if(reset)
-    read_pointer <=#Tp 0;
+    read_pointer <= 0;
   else
   if(clear)
-    read_pointer <=#Tp { {(CNT_WIDTH-2){1'b0}}, read};
+    read_pointer <= { {(CNT_WIDTH-2){1'b0}}, read};
   else
   if(read & ~empty)
-    read_pointer <=#Tp read_pointer + 1'b1;
+    read_pointer <= read_pointer + 1'b1;
 end
 
 always @ (posedge clk or posedge reset)
 begin
   if(reset)
-    write_pointer <=#Tp 0;
+    write_pointer <= 0;
   else
   if(clear)
-    write_pointer <=#Tp { {(CNT_WIDTH-2){1'b0}}, write};
+    write_pointer <= { {(CNT_WIDTH-2){1'b0}}, write};
   else
   if(write & ~full)
-    write_pointer <=#Tp write_pointer + 1'b1;
+    write_pointer <= write_pointer + 1'b1;
 end
 
 assign empty = ~(|cnt);
@@ -165,19 +163,19 @@ assign almost_full  = &cnt[CNT_WIDTH-2:0];
   always @ (posedge clk)
   begin
     if(write & clear)
-      fifo[0] <=#Tp data_in;
+      fifo[0] <= data_in;
     else
    if(write & ~full)
-      fifo[write_pointer] <=#Tp data_in;
+      fifo[write_pointer] <= data_in;
   end
   
 
   always @ (posedge clk)
   begin
     if(clear)
-      data_out <=#Tp fifo[0];
+      data_out <= fifo[0];
     else
-      data_out <=#Tp fifo[read_pointer];
+      data_out <= fifo[read_pointer];
   end
 `endif  // !ETH_ALTERA_ALTSYNCRAM
 `endif  // !ETH_FIFO_XILINX

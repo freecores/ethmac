@@ -70,8 +70,6 @@
 
 module eth_outputcontrol(Clk, Reset, InProgress, ShiftedBit, BitCounter, WriteOp, NoPre, MdcEn_n, Mdo, MdoEn);
 
-parameter Tp = 1;
-
 input         Clk;                // Host Clock
 input         Reset;              // General Reset
 input         WriteOp;            // Write Operation Latch (When asserted, write operation is in progress)
@@ -106,17 +104,17 @@ always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
     begin
-      MdoEn_2d <= #Tp 1'b0;
-      MdoEn_d <= #Tp 1'b0;
-      MdoEn <= #Tp 1'b0;
+      MdoEn_2d <=  1'b0;
+      MdoEn_d <=  1'b0;
+      MdoEn <=  1'b0;
     end
   else
     begin
       if(MdcEn_n)
         begin
-          MdoEn_2d <= #Tp SerialEn | InProgress & BitCounter<32;
-          MdoEn_d <= #Tp MdoEn_2d;
-          MdoEn <= #Tp MdoEn_d;
+          MdoEn_2d <=  SerialEn | InProgress & BitCounter<32;
+          MdoEn_d <=  MdoEn_2d;
+          MdoEn <=  MdoEn_d;
         end
     end
 end
@@ -127,17 +125,17 @@ always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
     begin
-      Mdo_2d <= #Tp 1'b0;
-      Mdo_d <= #Tp 1'b0;
-      Mdo <= #Tp 1'b0;
+      Mdo_2d <=  1'b0;
+      Mdo_d <=  1'b0;
+      Mdo <=  1'b0;
     end
   else
     begin
       if(MdcEn_n)
         begin
-          Mdo_2d <= #Tp ~SerialEn & BitCounter<32;
-          Mdo_d <= #Tp ShiftedBit | Mdo_2d;
-          Mdo <= #Tp Mdo_d;
+          Mdo_2d <=  ~SerialEn & BitCounter<32;
+          Mdo_d <=  ShiftedBit | Mdo_2d;
+          Mdo <=  Mdo_d;
         end
     end
 end

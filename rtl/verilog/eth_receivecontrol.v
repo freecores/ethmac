@@ -84,8 +84,6 @@ module eth_receivecontrol (MTxClk, MRxClk, TxReset, RxReset, RxData, RxValid, Rx
                            RxStatusWriteLatched_sync2, r_PassAll, SetPauseTimer
                           );
 
-parameter Tp = 1;
-
 
 input       MTxClk;
 input       MRxClk;
@@ -165,28 +163,28 @@ assign TypeLength = 16'h8808;
 always @ (posedge MRxClk or posedge RxReset)
 begin
   if(RxReset)
-    AddressOK <= #Tp 1'b0;
+    AddressOK <=  1'b0;
   else
   if(DetectionWindow & ByteCntEq0)
-    AddressOK <= #Tp  RxData[7:0] == ReservedMulticast[47:40] | RxData[7:0] == MAC[47:40];
+    AddressOK <=   RxData[7:0] == ReservedMulticast[47:40] | RxData[7:0] == MAC[47:40];
   else
   if(DetectionWindow & ByteCntEq1)
-    AddressOK <= #Tp (RxData[7:0] == ReservedMulticast[39:32] | RxData[7:0] == MAC[39:32]) & AddressOK;
+    AddressOK <=  (RxData[7:0] == ReservedMulticast[39:32] | RxData[7:0] == MAC[39:32]) & AddressOK;
   else
   if(DetectionWindow & ByteCntEq2)
-    AddressOK <= #Tp (RxData[7:0] == ReservedMulticast[31:24] | RxData[7:0] == MAC[31:24]) & AddressOK;
+    AddressOK <=  (RxData[7:0] == ReservedMulticast[31:24] | RxData[7:0] == MAC[31:24]) & AddressOK;
   else
   if(DetectionWindow & ByteCntEq3)
-    AddressOK <= #Tp (RxData[7:0] == ReservedMulticast[23:16] | RxData[7:0] == MAC[23:16]) & AddressOK;
+    AddressOK <=  (RxData[7:0] == ReservedMulticast[23:16] | RxData[7:0] == MAC[23:16]) & AddressOK;
   else
   if(DetectionWindow & ByteCntEq4)
-    AddressOK <= #Tp (RxData[7:0] == ReservedMulticast[15:8]  | RxData[7:0] == MAC[15:8])  & AddressOK;
+    AddressOK <=  (RxData[7:0] == ReservedMulticast[15:8]  | RxData[7:0] == MAC[15:8])  & AddressOK;
   else
   if(DetectionWindow & ByteCntEq5)
-    AddressOK <= #Tp (RxData[7:0] == ReservedMulticast[7:0]   | RxData[7:0] == MAC[7:0])   & AddressOK;
+    AddressOK <=  (RxData[7:0] == ReservedMulticast[7:0]   | RxData[7:0] == MAC[7:0])   & AddressOK;
   else
   if(ReceiveEnd)
-    AddressOK <= #Tp 1'b0;
+    AddressOK <=  1'b0;
 end
 
 
@@ -195,16 +193,16 @@ end
 always @ (posedge MRxClk or posedge RxReset )
 begin
   if(RxReset)
-    TypeLengthOK <= #Tp 1'b0;
+    TypeLengthOK <=  1'b0;
   else
   if(DetectionWindow & ByteCntEq12)
-    TypeLengthOK <= #Tp ByteCntEq12 & (RxData[7:0] == TypeLength[15:8]);
+    TypeLengthOK <=  ByteCntEq12 & (RxData[7:0] == TypeLength[15:8]);
   else
   if(DetectionWindow & ByteCntEq13)
-    TypeLengthOK <= #Tp ByteCntEq13 & (RxData[7:0] == TypeLength[7:0]) & TypeLengthOK;
+    TypeLengthOK <=  ByteCntEq13 & (RxData[7:0] == TypeLength[7:0]) & TypeLengthOK;
   else
   if(ReceiveEnd)
-    TypeLengthOK <= #Tp 1'b0;
+    TypeLengthOK <=  1'b0;
 end
 
 
@@ -213,17 +211,17 @@ end
 always @ (posedge MRxClk or posedge RxReset )
 begin
   if(RxReset)
-    OpCodeOK <= #Tp 1'b0;
+    OpCodeOK <=  1'b0;
   else
   if(ByteCntEq16)
-    OpCodeOK <= #Tp 1'b0;
+    OpCodeOK <=  1'b0;
   else
     begin
       if(DetectionWindow & ByteCntEq14)
-        OpCodeOK <= #Tp ByteCntEq14 & RxData[7:0] == 8'h00;
+        OpCodeOK <=  ByteCntEq14 & RxData[7:0] == 8'h00;
     
       if(DetectionWindow & ByteCntEq15)
-        OpCodeOK <= #Tp ByteCntEq15 & RxData[7:0] == 8'h01 & OpCodeOK;
+        OpCodeOK <=  ByteCntEq15 & RxData[7:0] == 8'h01 & OpCodeOK;
     end
 end
 
@@ -232,13 +230,13 @@ end
 always @ (posedge MRxClk or posedge RxReset )
 begin
   if(RxReset)
-    ReceivedPauseFrmWAddr <= #Tp 1'b0;
+    ReceivedPauseFrmWAddr <=  1'b0;
   else
   if(ReceiveEnd)
-    ReceivedPauseFrmWAddr <= #Tp 1'b0;
+    ReceivedPauseFrmWAddr <=  1'b0;
   else
   if(ByteCntEq16 & TypeLengthOK & OpCodeOK & AddressOK)
-    ReceivedPauseFrmWAddr <= #Tp 1'b1;        
+    ReceivedPauseFrmWAddr <=  1'b1;        
 end
 
 
@@ -247,16 +245,16 @@ end
 always @ (posedge MRxClk or posedge RxReset )
 begin
   if(RxReset)
-    AssembledTimerValue[15:0] <= #Tp 16'h0;
+    AssembledTimerValue[15:0] <=  16'h0;
   else
   if(RxStartFrm)
-    AssembledTimerValue[15:0] <= #Tp 16'h0;
+    AssembledTimerValue[15:0] <=  16'h0;
   else
     begin
       if(DetectionWindow & ByteCntEq16)
-        AssembledTimerValue[15:8] <= #Tp RxData[7:0];
+        AssembledTimerValue[15:8] <=  RxData[7:0];
       if(DetectionWindow & ByteCntEq17)
-        AssembledTimerValue[7:0] <= #Tp RxData[7:0];
+        AssembledTimerValue[7:0] <=  RxData[7:0];
     end
 end
 
@@ -265,13 +263,13 @@ end
 always @ (posedge MRxClk or posedge RxReset )
 begin
   if(RxReset)
-    DetectionWindow <= #Tp 1'b1;
+    DetectionWindow <=  1'b1;
   else
   if(ByteCntEq18)
-    DetectionWindow <= #Tp 1'b0;
+    DetectionWindow <=  1'b0;
   else
   if(ReceiveEnd)
-    DetectionWindow <= #Tp 1'b1;
+    DetectionWindow <=  1'b1;
 end
 
 
@@ -280,13 +278,13 @@ end
 always @ (posedge MRxClk or posedge RxReset )
 begin
   if(RxReset)
-    LatchedTimerValue[15:0] <= #Tp 16'h0;
+    LatchedTimerValue[15:0] <=  16'h0;
   else
   if(DetectionWindow &  ReceivedPauseFrmWAddr &  ByteCntEq18)
-    LatchedTimerValue[15:0] <= #Tp AssembledTimerValue[15:0];
+    LatchedTimerValue[15:0] <=  AssembledTimerValue[15:0];
   else
   if(ReceiveEnd)
-    LatchedTimerValue[15:0] <= #Tp 16'h0;
+    LatchedTimerValue[15:0] <=  16'h0;
 end
 
 
@@ -295,13 +293,13 @@ end
 always @ (posedge MRxClk or posedge RxReset)
 begin
   if(RxReset)
-    DlyCrcCnt <= #Tp 3'h0;
+    DlyCrcCnt <=  3'h0;
   else
   if(RxValid & RxEndFrm)
-    DlyCrcCnt <= #Tp 3'h0;
+    DlyCrcCnt <=  3'h0;
   else
   if(RxValid & ~RxEndFrm & ~DlyCrcCnt[2])
-    DlyCrcCnt <= #Tp DlyCrcCnt + 1'b1;
+    DlyCrcCnt <=  DlyCrcCnt + 1'b1;
 end
 
              
@@ -313,13 +311,13 @@ assign IncrementByteCnt = RxValid & DetectionWindow & ~ByteCntEq18 & (~DlyCrcEn 
 always @ (posedge MRxClk or posedge RxReset)
 begin
   if(RxReset)
-    ByteCnt[4:0] <= #Tp 5'h0;
+    ByteCnt[4:0] <=  5'h0;
   else
   if(ResetByteCnt)
-    ByteCnt[4:0] <= #Tp 5'h0;
+    ByteCnt[4:0] <=  5'h0;
   else
   if(IncrementByteCnt)
-    ByteCnt[4:0] <= #Tp ByteCnt[4:0] + 1'b1;
+    ByteCnt[4:0] <=  ByteCnt[4:0] + 1'b1;
 end
 
 
@@ -346,13 +344,13 @@ assign DecrementPauseTimer = SlotFinished & |PauseTimer;
 always @ (posedge MRxClk or posedge RxReset)
 begin
   if(RxReset)
-    PauseTimer[15:0] <= #Tp 16'h0;
+    PauseTimer[15:0] <=  16'h0;
   else
   if(SetPauseTimer)
-    PauseTimer[15:0] <= #Tp LatchedTimerValue[15:0];
+    PauseTimer[15:0] <=  LatchedTimerValue[15:0];
   else
   if(DecrementPauseTimer)
-    PauseTimer[15:0] <= #Tp PauseTimer[15:0] - 1'b1;
+    PauseTimer[15:0] <=  PauseTimer[15:0] - 1'b1;
 end
 
 assign PauseTimerEq0 = ~(|PauseTimer[15:0]);
@@ -364,13 +362,13 @@ always @ (posedge MTxClk or posedge TxReset)
 begin
   if(TxReset)
     begin
-      PauseTimerEq0_sync1 <= #Tp 1'b1;
-      PauseTimerEq0_sync2 <= #Tp 1'b1;
+      PauseTimerEq0_sync1 <=  1'b1;
+      PauseTimerEq0_sync2 <=  1'b1;
     end
   else
     begin
-      PauseTimerEq0_sync1 <= #Tp PauseTimerEq0;
-      PauseTimerEq0_sync2 <= #Tp PauseTimerEq0_sync1;
+      PauseTimerEq0_sync1 <=  PauseTimerEq0;
+      PauseTimerEq0_sync2 <=  PauseTimerEq0_sync1;
     end
 end
 
@@ -379,10 +377,10 @@ end
 always @ (posedge MTxClk or posedge TxReset)
 begin
   if(TxReset)
-    Pause <= #Tp 1'b0;
+    Pause <=  1'b0;
   else
   if((TxDoneIn | TxAbortIn | ~TxUsedDataOutDetected) & ~TxStartFrmOut)
-    Pause <= #Tp RxFlow & ~PauseTimerEq0_sync2;
+    Pause <=  RxFlow & ~PauseTimerEq0_sync2;
 end
 
 
@@ -390,12 +388,12 @@ end
 always @ (posedge MRxClk or posedge RxReset)
 begin
   if(RxReset)
-    Divider2 <= #Tp 1'b0;
+    Divider2 <=  1'b0;
   else
   if(|PauseTimer[15:0] & RxFlow)
-    Divider2 <= #Tp ~Divider2;
+    Divider2 <=  ~Divider2;
   else
-    Divider2 <= #Tp 1'b0;
+    Divider2 <=  1'b0;
 end
 
 
@@ -407,13 +405,13 @@ assign IncrementSlotTimer =  Pause & RxFlow & Divider2;
 always @ (posedge MRxClk or posedge RxReset)
 begin
   if(RxReset)
-    SlotTimer[5:0] <= #Tp 6'h0;
+    SlotTimer[5:0] <=  6'h0;
   else
   if(ResetSlotTimer)
-    SlotTimer[5:0] <= #Tp 6'h0;
+    SlotTimer[5:0] <=  6'h0;
   else
   if(IncrementSlotTimer)
-    SlotTimer[5:0] <= #Tp SlotTimer[5:0] + 1'b1;
+    SlotTimer[5:0] <=  SlotTimer[5:0] + 1'b1;
 end
 
 
@@ -425,13 +423,13 @@ assign SlotFinished = &SlotTimer[5:0] & IncrementSlotTimer;  // Slot is 512 bits
 always @ (posedge MRxClk or posedge RxReset)
 begin
   if(RxReset)
-    ReceivedPauseFrm <=#Tp 1'b0;
+    ReceivedPauseFrm <= 1'b0;
   else
   if(RxStatusWriteLatched_sync2 & r_PassAll | ReceivedPauseFrm & (~r_PassAll))
-    ReceivedPauseFrm <=#Tp 1'b0;
+    ReceivedPauseFrm <= 1'b0;
   else
   if(ByteCntEq16 & TypeLengthOK & OpCodeOK)
-    ReceivedPauseFrm <=#Tp 1'b1;        
+    ReceivedPauseFrm <= 1'b1;        
 end
 
 

@@ -96,8 +96,6 @@ module eth_txstatem  (MTxClk, Reset, ExcessiveDefer, CarrierSense, NibCnt, IPGT,
                       StartBackoff, StartDefer, DeferIndication, StartPreamble, StartData, StartIPG
                      );
 
-parameter Tp = 1;
-
 input MTxClk;
 input Reset;
 input ExcessiveDefer;
@@ -197,69 +195,69 @@ always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
     begin
-      StateIPG        <= #Tp 1'b0;
-      StateIdle       <= #Tp 1'b0;
-      StatePreamble   <= #Tp 1'b0;
-      StateData[1:0]  <= #Tp 2'b0;
-      StatePAD        <= #Tp 1'b0;
-      StateFCS        <= #Tp 1'b0;
-      StateJam        <= #Tp 1'b0;
-      StateJam_q      <= #Tp 1'b0;
-      StateBackOff    <= #Tp 1'b0;
-      StateDefer      <= #Tp 1'b1;
+      StateIPG        <=  1'b0;
+      StateIdle       <=  1'b0;
+      StatePreamble   <=  1'b0;
+      StateData[1:0]  <=  2'b0;
+      StatePAD        <=  1'b0;
+      StateFCS        <=  1'b0;
+      StateJam        <=  1'b0;
+      StateJam_q      <=  1'b0;
+      StateBackOff    <=  1'b0;
+      StateDefer      <=  1'b1;
     end
   else
     begin
-      StateData[1:0] <= #Tp StartData[1:0];
-      StateJam_q <= #Tp StateJam;
+      StateData[1:0] <=  StartData[1:0];
+      StateJam_q <=  StateJam;
 
       if(StartDefer | StartIdle)
-        StateIPG <= #Tp 1'b0;
+        StateIPG <=  1'b0;
       else
       if(StartIPG)
-        StateIPG <= #Tp 1'b1;
+        StateIPG <=  1'b1;
 
       if(StartDefer | StartPreamble)
-        StateIdle <= #Tp 1'b0;
+        StateIdle <=  1'b0;
       else
       if(StartIdle)
-        StateIdle <= #Tp 1'b1;
+        StateIdle <=  1'b1;
 
       if(StartData[0] | StartJam)
-        StatePreamble <= #Tp 1'b0;
+        StatePreamble <=  1'b0;
       else
       if(StartPreamble)
-        StatePreamble <= #Tp 1'b1;
+        StatePreamble <=  1'b1;
 
       if(StartFCS | StartJam)
-        StatePAD <= #Tp 1'b0;
+        StatePAD <=  1'b0;
       else
       if(StartPAD)
-        StatePAD <= #Tp 1'b1;
+        StatePAD <=  1'b1;
 
       if(StartJam | StartDefer)
-        StateFCS <= #Tp 1'b0;
+        StateFCS <=  1'b0;
       else
       if(StartFCS)
-        StateFCS <= #Tp 1'b1;
+        StateFCS <=  1'b1;
 
       if(StartBackoff | StartDefer)
-        StateJam <= #Tp 1'b0;
+        StateJam <=  1'b0;
       else
       if(StartJam)
-        StateJam <= #Tp 1'b1;
+        StateJam <=  1'b1;
 
       if(StartDefer)
-        StateBackOff <= #Tp 1'b0;
+        StateBackOff <=  1'b0;
       else
       if(StartBackoff)
-        StateBackOff <= #Tp 1'b1;
+        StateBackOff <=  1'b1;
 
       if(StartIPG)
-        StateDefer <= #Tp 1'b0;
+        StateDefer <=  1'b0;
       else
       if(StartDefer)
-        StateDefer <= #Tp 1'b1;
+        StateDefer <=  1'b1;
     end
 end
 
@@ -268,14 +266,14 @@ end
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    Rule1 <= #Tp 1'b0;
+    Rule1 <=  1'b0;
   else
     begin
       if(StateIdle | StateBackOff)
-        Rule1 <= #Tp 1'b0;
+        Rule1 <=  1'b0;
       else
       if(StatePreamble | FullD)
-        Rule1 <= #Tp 1'b1;
+        Rule1 <=  1'b1;
     end
 end
 

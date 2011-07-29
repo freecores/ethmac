@@ -278,7 +278,6 @@ module eth_top
 );
 
 
-parameter Tp = 1;
 parameter TX_FIFO_DATA_WIDTH = `ETH_TX_FIFO_DATA_WIDTH;
 parameter TX_FIFO_DEPTH      = `ETH_TX_FIFO_DEPTH;
 parameter TX_FIFO_CNT_WIDTH  = `ETH_TX_FIFO_CNT_WIDTH;
@@ -389,8 +388,7 @@ reg             TPauseRq;
 
 
 // Connecting Miim module
-eth_miim #(.Tp(Tp))
-miim1
+eth_miim miim1
 (
   .Clk(wb_clk_i),                         .Reset(wb_rst_i),                   .Divider(r_ClkDiv), 
   .NoPre(r_MiiNoPre),                     .CtrlData(r_CtrlData),              .Rgad(r_RGAD), 
@@ -534,23 +532,22 @@ assign temp_wb_err_o = wb_stb_i & wb_cyc_i & (~ByteSelected | CsMiss);
   begin
     if(wb_rst_i)
       begin
-        temp_wb_ack_o_reg <=#Tp 1'b0;
-        temp_wb_dat_o_reg <=#Tp 32'h0;
-        temp_wb_err_o_reg <=#Tp 1'b0;
+        temp_wb_ack_o_reg <= 1'b0;
+        temp_wb_dat_o_reg <= 32'h0;
+        temp_wb_err_o_reg <= 1'b0;
       end
     else
       begin
-        temp_wb_ack_o_reg <=#Tp temp_wb_ack_o & ~temp_wb_ack_o_reg;
-        temp_wb_dat_o_reg <=#Tp temp_wb_dat_o;
-        temp_wb_err_o_reg <=#Tp temp_wb_err_o & ~temp_wb_err_o_reg;
+        temp_wb_ack_o_reg <= temp_wb_ack_o & ~temp_wb_ack_o_reg;
+        temp_wb_dat_o_reg <= temp_wb_dat_o;
+        temp_wb_err_o_reg <= temp_wb_err_o & ~temp_wb_err_o_reg;
       end
   end
 `endif
 
 
 // Connecting Ethernet registers
-eth_registers #(.Tp(Tp))
-ethreg1
+eth_registers ethreg1
 (
   .DataIn(wb_dat_i),                      .Address(wb_adr_i[9:2]),                    .Rw(wb_we_i), 
   .Cs(RegCs),                             .Clk(wb_clk_i),                             .Reset(wb_rst_i), 
@@ -607,8 +604,7 @@ wire        StatePreamble;
 wire  [1:0] StateData; 
 
 // Connecting MACControl
-eth_maccontrol #(.Tp(Tp))
-maccontrol1
+eth_maccontrol maccontrol1
 (
   .MTxClk(mtx_clk_pad_i),                       .TPauseRq(TPauseRq), 
   .TxPauseTV(r_TxPauseTV),                      .TxDataIn(TxData), 
@@ -661,8 +657,7 @@ assign MRxD_Lb[3:0] = r_LoopBck? mtxd_pad_o[3:0] : mrxd_pad_i[3:0];
 
 
 // Connecting TxEthMAC
-eth_txethmac #(.Tp(Tp))
-txethmac1
+eth_txethmac txethmac1
 (
   .MTxClk(mtx_clk_pad_i),             .Reset(wb_rst_i),                   .CarrierSense(TxCarrierSense), 
   .Collision(Collision),              .TxData(TxDataOut),                 .TxStartFrm(TxStartFrmOut), 
@@ -696,8 +691,7 @@ wire          AddressMiss;
 
 
 // Connecting RxEthMAC
-eth_rxethmac #(.Tp(Tp))
-rxethmac1
+eth_rxethmac rxethmac1
 (
   .MRxClk(mrx_clk_pad_i),               .MRxDV(MRxDV_Lb),                     .MRxD(MRxD_Lb),
   .Transmitting(Transmitting),          .HugEn(r_HugEn),                      .DlyCrcEn(r_DlyCrcEn), 
@@ -718,13 +712,13 @@ always @ (posedge mtx_clk_pad_i or posedge wb_rst_i)
 begin
   if(wb_rst_i)
     begin
-      CarrierSense_Tx1 <= #Tp 1'b0;
-      CarrierSense_Tx2 <= #Tp 1'b0;
+      CarrierSense_Tx1 <=  1'b0;
+      CarrierSense_Tx2 <=  1'b0;
     end
   else
     begin
-      CarrierSense_Tx1 <= #Tp mcrs_pad_i;
-      CarrierSense_Tx2 <= #Tp CarrierSense_Tx1;
+      CarrierSense_Tx1 <=  mcrs_pad_i;
+      CarrierSense_Tx2 <=  CarrierSense_Tx1;
     end
 end
 
@@ -736,17 +730,17 @@ always @ (posedge mtx_clk_pad_i or posedge wb_rst_i)
 begin
   if(wb_rst_i)
     begin
-      Collision_Tx1 <= #Tp 1'b0;
-      Collision_Tx2 <= #Tp 1'b0;
+      Collision_Tx1 <=  1'b0;
+      Collision_Tx2 <=  1'b0;
     end
   else
     begin
-      Collision_Tx1 <= #Tp mcoll_pad_i;
+      Collision_Tx1 <=  mcoll_pad_i;
       if(ResetCollision)
-        Collision_Tx2 <= #Tp 1'b0;
+        Collision_Tx2 <=  1'b0;
       else
       if(Collision_Tx1)
-        Collision_Tx2 <= #Tp 1'b1;
+        Collision_Tx2 <=  1'b1;
     end
 end
 
@@ -759,8 +753,8 @@ assign Collision = ~r_FullD & Collision_Tx2;
 // Delayed WillTransmit
 always @ (posedge mrx_clk_pad_i)
 begin
-  WillTransmit_q <= #Tp WillTransmit;
-  WillTransmit_q2 <= #Tp WillTransmit_q;
+  WillTransmit_q <=  WillTransmit;
+  WillTransmit_q2 <=  WillTransmit_q;
 end 
 
 
@@ -772,10 +766,10 @@ assign Transmitting = ~r_FullD & WillTransmit_q2;
 always @ (posedge mrx_clk_pad_i or posedge wb_rst_i)
 begin
   if(wb_rst_i)
-    RxEnSync <= #Tp 1'b0;
+    RxEnSync <=  1'b0;
   else
   if(~mrxdv_pad_i)
-    RxEnSync <= #Tp r_RxEn;
+    RxEnSync <=  r_RxEn;
 end 
 
 
@@ -786,7 +780,7 @@ begin
   if(wb_rst_i)
     WillSendControlFrame_sync1 <= 1'b0;
   else
-    WillSendControlFrame_sync1 <=#Tp WillSendControlFrame;
+    WillSendControlFrame_sync1 <= WillSendControlFrame;
 end
 
 always @ (posedge wb_clk_i or posedge wb_rst_i)
@@ -794,7 +788,7 @@ begin
   if(wb_rst_i)
     WillSendControlFrame_sync2 <= 1'b0;
   else
-    WillSendControlFrame_sync2 <=#Tp WillSendControlFrame_sync1;
+    WillSendControlFrame_sync2 <= WillSendControlFrame_sync1;
 end
 
 always @ (posedge wb_clk_i or posedge wb_rst_i)
@@ -802,7 +796,7 @@ begin
   if(wb_rst_i)
     WillSendControlFrame_sync3 <= 1'b0;
   else
-    WillSendControlFrame_sync3 <=#Tp WillSendControlFrame_sync2;
+    WillSendControlFrame_sync3 <= WillSendControlFrame_sync2;
 end
 
 always @ (posedge wb_clk_i or posedge wb_rst_i)
@@ -810,7 +804,7 @@ begin
   if(wb_rst_i)
     RstTxPauseRq <= 1'b0;
   else
-    RstTxPauseRq <=#Tp WillSendControlFrame_sync2 & ~WillSendControlFrame_sync3;
+    RstTxPauseRq <= WillSendControlFrame_sync2 & ~WillSendControlFrame_sync3;
 end
 
 
@@ -821,15 +815,15 @@ always @ (posedge mtx_clk_pad_i or posedge wb_rst_i)
 begin
   if(wb_rst_i)
     begin
-      TxPauseRq_sync1 <= #Tp 1'b0;
-      TxPauseRq_sync2 <= #Tp 1'b0;
-      TxPauseRq_sync3 <= #Tp 1'b0;
+      TxPauseRq_sync1 <=  1'b0;
+      TxPauseRq_sync2 <=  1'b0;
+      TxPauseRq_sync3 <=  1'b0;
     end
   else
     begin
-      TxPauseRq_sync1 <= #Tp (r_TxPauseRq & r_TxFlow);
-      TxPauseRq_sync2 <= #Tp TxPauseRq_sync1;
-      TxPauseRq_sync3 <= #Tp TxPauseRq_sync2;
+      TxPauseRq_sync1 <=  (r_TxPauseRq & r_TxFlow);
+      TxPauseRq_sync2 <=  TxPauseRq_sync1;
+      TxPauseRq_sync3 <=  TxPauseRq_sync2;
     end
 end
 
@@ -837,9 +831,9 @@ end
 always @ (posedge mtx_clk_pad_i or posedge wb_rst_i)
 begin
   if(wb_rst_i)
-    TPauseRq <= #Tp 1'b0;
+    TPauseRq <=  1'b0;
   else
-    TPauseRq <= #Tp TxPauseRq_sync2 & (~TxPauseRq_sync3);
+    TPauseRq <=  TxPauseRq_sync2 & (~TxPauseRq_sync3);
 end
 
 
@@ -854,25 +848,25 @@ reg RxAbortRst;
 always @ (posedge mrx_clk_pad_i or posedge wb_rst_i)
 begin
   if(wb_rst_i)
-    RxAbort_latch <= #Tp 1'b0;
+    RxAbort_latch <=  1'b0;
   else if(RxAbort | (ShortFrame & ~r_RecSmall) | LatchedMRxErr & ~InvalidSymbol | (ReceivedPauseFrm & (~r_PassAll)))
-    RxAbort_latch <= #Tp 1'b1;
+    RxAbort_latch <=  1'b1;
   else if(RxAbortRst)
-    RxAbort_latch <= #Tp 1'b0;
+    RxAbort_latch <=  1'b0;
 end
 
 always @ (posedge wb_clk_i or posedge wb_rst_i)
 begin
   if(wb_rst_i)
     begin
-      RxAbort_sync1 <= #Tp 1'b0;
-      RxAbort_wb    <= #Tp 1'b0;
-      RxAbort_wb    <= #Tp 1'b0;
+      RxAbort_sync1 <=  1'b0;
+      RxAbort_wb    <=  1'b0;
+      RxAbort_wb    <=  1'b0;
     end
   else
     begin
-      RxAbort_sync1 <= #Tp RxAbort_latch;
-      RxAbort_wb    <= #Tp RxAbort_sync1;
+      RxAbort_sync1 <=  RxAbort_latch;
+      RxAbort_wb    <=  RxAbort_sync1;
     end
 end
 
@@ -880,21 +874,20 @@ always @ (posedge mrx_clk_pad_i or posedge wb_rst_i)
 begin
   if(wb_rst_i)
     begin
-      RxAbortRst_sync1 <= #Tp 1'b0;
-      RxAbortRst       <= #Tp 1'b0;
+      RxAbortRst_sync1 <=  1'b0;
+      RxAbortRst       <=  1'b0;
     end
   else
     begin
-      RxAbortRst_sync1 <= #Tp RxAbort_wb;
-      RxAbortRst       <= #Tp RxAbortRst_sync1;
+      RxAbortRst_sync1 <=  RxAbort_wb;
+      RxAbortRst       <=  RxAbortRst_sync1;
     end
 end
 
 
 
 // Connecting Wishbone module
-eth_wishbone #(.Tp(Tp),
-	       .TX_FIFO_DATA_WIDTH(TX_FIFO_DATA_WIDTH),
+eth_wishbone #(.TX_FIFO_DATA_WIDTH(TX_FIFO_DATA_WIDTH),
 	       .TX_FIFO_DEPTH     (TX_FIFO_DEPTH),
 	       .TX_FIFO_CNT_WIDTH (TX_FIFO_CNT_WIDTH),
 	       .RX_FIFO_DATA_WIDTH(RX_FIFO_DATA_WIDTH),
@@ -959,8 +952,7 @@ wishbone
 assign m_wb_adr_o = {m_wb_adr_tmp, 2'h0};
 
 // Connecting MacStatus module
-eth_macstatus #(.Tp(Tp))
-macstatus1 
+eth_macstatus macstatus1 
 (
   .MRxClk(mrx_clk_pad_i),             .Reset(wb_rst_i),
   .ReceiveEnd(ReceiveEnd),            .ReceivedPacketGood(ReceivedPacketGood),     .ReceivedLengthOK(ReceivedLengthOK), 

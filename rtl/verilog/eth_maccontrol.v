@@ -94,8 +94,6 @@ module eth_maccontrol (MTxClk, MRxClk, TxReset, RxReset, TPauseRq, TxDataIn, TxS
                       );
 
 
-parameter   Tp = 1;
-
 
 input         MTxClk;                   // Transmit clock (from PHY)
 input         MRxClk;                   // Receive clock (from PHY)
@@ -157,13 +155,13 @@ wire          BlockTxDone;
 always @ (posedge MTxClk or posedge TxReset)
 begin
   if(TxReset)
-    TxUsedDataOutDetected <= #Tp 1'b0;
+    TxUsedDataOutDetected <=  1'b0;
   else
   if(TxDoneIn | TxAbortIn)
-    TxUsedDataOutDetected <= #Tp 1'b0;
+    TxUsedDataOutDetected <=  1'b0;
   else
   if(TxUsedDataOut)
-    TxUsedDataOutDetected <= #Tp 1'b1;
+    TxUsedDataOutDetected <=  1'b1;
 end    
 
 
@@ -172,13 +170,13 @@ always @ (posedge MTxClk or posedge TxReset)
 begin
   if(TxReset)
     begin
-      TxAbortInLatched <= #Tp 1'b0;
-      TxDoneInLatched  <= #Tp 1'b0;
+      TxAbortInLatched <=  1'b0;
+      TxDoneInLatched  <=  1'b0;
     end
   else
     begin
-      TxAbortInLatched <= #Tp TxAbortIn;
-      TxDoneInLatched  <= #Tp TxDoneIn;
+      TxAbortInLatched <=  TxAbortIn;
+      TxDoneInLatched  <=  TxDoneIn;
     end
 end
 
@@ -188,13 +186,13 @@ end
 always @ (posedge MTxClk or posedge TxReset)
 begin
   if(TxReset)
-    MuxedAbort <= #Tp 1'b0;
+    MuxedAbort <=  1'b0;
   else
   if(TxStartFrmIn)
-    MuxedAbort <= #Tp 1'b0;
+    MuxedAbort <=  1'b0;
   else
   if(TxAbortIn & ~TxAbortInLatched & TxUsedDataOutDetected)
-    MuxedAbort <= #Tp 1'b1;
+    MuxedAbort <=  1'b1;
 end
 
 
@@ -202,13 +200,13 @@ end
 always @ (posedge MTxClk or posedge TxReset)
 begin
   if(TxReset)
-    MuxedDone <= #Tp 1'b0;
+    MuxedDone <=  1'b0;
   else
   if(TxStartFrmIn)
-    MuxedDone <= #Tp 1'b0;
+    MuxedDone <=  1'b0;
   else
   if(TxDoneIn & (~TxDoneInLatched) & TxUsedDataOutDetected)
-    MuxedDone <= #Tp 1'b1;
+    MuxedDone <=  1'b1;
 end
 
 
@@ -245,8 +243,7 @@ assign CrcEnOut = CrcEnIn | SendingCtrlFrm;
 
 
 // Connecting receivecontrol module
-eth_receivecontrol #(.Tp(Tp))
-receivecontrol1 
+eth_receivecontrol receivecontrol1 
 (
  .MTxClk(MTxClk), .MRxClk(MRxClk), .TxReset(TxReset), .RxReset(RxReset), .RxData(RxData), 
  .RxValid(RxValid), .RxStartFrm(RxStartFrm), .RxEndFrm(RxEndFrm), .RxFlow(RxFlow), 
@@ -258,8 +255,7 @@ receivecontrol1
 );
 
 
-eth_transmitcontrol #(.Tp(Tp))
-transmitcontrol1
+eth_transmitcontrol transmitcontrol1
 (
  .MTxClk(MTxClk), .TxReset(TxReset), .TxUsedDataIn(TxUsedDataIn), .TxUsedDataOut(TxUsedDataOut), 
  .TxDoneIn(TxDoneIn), .TxAbortIn(TxAbortIn), .TxStartFrmIn(TxStartFrmIn), .TPauseRq(TPauseRq), 

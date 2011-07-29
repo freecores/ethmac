@@ -79,8 +79,6 @@
 module eth_crc (Clk, Reset, Data, Enable, Initialize, Crc, CrcError);
 
 
-parameter Tp = 1;
-
 input Clk;
 input Reset;
 input [3:0] Data;
@@ -132,12 +130,12 @@ assign CrcNext[31] = Crc[27];
 always @ (posedge Clk or posedge Reset)
 begin
   if (Reset)
-    Crc <= #1 32'hffffffff;
+    Crc <=  32'hffffffff;
   else
   if(Initialize)
-    Crc <= #Tp 32'hffffffff;
+    Crc <=  32'hffffffff;
   else
-    Crc <= #Tp CrcNext;
+    Crc <=  CrcNext;
 end
 
 assign CrcError = Crc[31:0] != 32'hc704dd7b;  // CRC not equal to magic number

@@ -181,8 +181,6 @@ module eth_registers( DataIn, Address, Rw, Cs, Clk, Reset, DataOut,
                       StartTxDone, TxClk, RxClk, SetPauseTimer
                     );
 
-parameter Tp = 1;
-
 input [31:0] DataIn;
 input [7:0] Address;
 
@@ -948,62 +946,62 @@ assign r_TxPauseRq        = TXCTRLOut[16];
 always @ (posedge TxClk or posedge Reset)
 begin
   if(Reset)
-    SetTxCIrq_txclk <=#Tp 1'b0;
+    SetTxCIrq_txclk <= 1'b0;
   else
   if(TxCtrlEndFrm & StartTxDone & r_TxFlow)
-    SetTxCIrq_txclk <=#Tp 1'b1;
+    SetTxCIrq_txclk <= 1'b1;
   else
   if(ResetTxCIrq_sync2)
-    SetTxCIrq_txclk <=#Tp 1'b0;
+    SetTxCIrq_txclk <= 1'b0;
 end
 
 
 always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
-    SetTxCIrq_sync1 <=#Tp 1'b0;
+    SetTxCIrq_sync1 <= 1'b0;
   else
-    SetTxCIrq_sync1 <=#Tp SetTxCIrq_txclk;
+    SetTxCIrq_sync1 <= SetTxCIrq_txclk;
 end
 
 always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
-    SetTxCIrq_sync2 <=#Tp 1'b0;
+    SetTxCIrq_sync2 <= 1'b0;
   else
-    SetTxCIrq_sync2 <=#Tp SetTxCIrq_sync1;
+    SetTxCIrq_sync2 <= SetTxCIrq_sync1;
 end
 
 always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
-    SetTxCIrq_sync3 <=#Tp 1'b0;
+    SetTxCIrq_sync3 <= 1'b0;
   else
-    SetTxCIrq_sync3 <=#Tp SetTxCIrq_sync2;
+    SetTxCIrq_sync3 <= SetTxCIrq_sync2;
 end
 
 always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
-    SetTxCIrq <=#Tp 1'b0;
+    SetTxCIrq <= 1'b0;
   else
-    SetTxCIrq <=#Tp SetTxCIrq_sync2 & ~SetTxCIrq_sync3;
+    SetTxCIrq <= SetTxCIrq_sync2 & ~SetTxCIrq_sync3;
 end
 
 always @ (posedge TxClk or posedge Reset)
 begin
   if(Reset)
-    ResetTxCIrq_sync1 <=#Tp 1'b0;
+    ResetTxCIrq_sync1 <= 1'b0;
   else
-    ResetTxCIrq_sync1 <=#Tp SetTxCIrq_sync2;
+    ResetTxCIrq_sync1 <= SetTxCIrq_sync2;
 end
 
 always @ (posedge TxClk or posedge Reset)
 begin
   if(Reset)
-    ResetTxCIrq_sync2 <=#Tp 1'b0;
+    ResetTxCIrq_sync2 <= 1'b0;
   else
-    ResetTxCIrq_sync2 <=#Tp SetTxCIrq_sync1;
+    ResetTxCIrq_sync2 <= SetTxCIrq_sync1;
 end
 
 
@@ -1011,70 +1009,70 @@ end
 always @ (posedge RxClk or posedge Reset)
 begin
   if(Reset)
-    SetRxCIrq_rxclk <=#Tp 1'b0;
+    SetRxCIrq_rxclk <= 1'b0;
   else
   if(SetPauseTimer & r_RxFlow)
-    SetRxCIrq_rxclk <=#Tp 1'b1;
+    SetRxCIrq_rxclk <= 1'b1;
   else
   if(ResetRxCIrq_sync2 & (~ResetRxCIrq_sync3))
-    SetRxCIrq_rxclk <=#Tp 1'b0;
+    SetRxCIrq_rxclk <= 1'b0;
 end
 
 
 always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
-    SetRxCIrq_sync1 <=#Tp 1'b0;
+    SetRxCIrq_sync1 <= 1'b0;
   else
-    SetRxCIrq_sync1 <=#Tp SetRxCIrq_rxclk;
+    SetRxCIrq_sync1 <= SetRxCIrq_rxclk;
 end
 
 always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
-    SetRxCIrq_sync2 <=#Tp 1'b0;
+    SetRxCIrq_sync2 <= 1'b0;
   else
-    SetRxCIrq_sync2 <=#Tp SetRxCIrq_sync1;
+    SetRxCIrq_sync2 <= SetRxCIrq_sync1;
 end
 
 always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
-    SetRxCIrq_sync3 <=#Tp 1'b0;
+    SetRxCIrq_sync3 <= 1'b0;
   else
-    SetRxCIrq_sync3 <=#Tp SetRxCIrq_sync2;
+    SetRxCIrq_sync3 <= SetRxCIrq_sync2;
 end
 
 always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
-    SetRxCIrq <=#Tp 1'b0;
+    SetRxCIrq <= 1'b0;
   else
-    SetRxCIrq <=#Tp SetRxCIrq_sync2 & ~SetRxCIrq_sync3;
+    SetRxCIrq <= SetRxCIrq_sync2 & ~SetRxCIrq_sync3;
 end
 
 always @ (posedge RxClk or posedge Reset)
 begin
   if(Reset)
-    ResetRxCIrq_sync1 <=#Tp 1'b0;
+    ResetRxCIrq_sync1 <= 1'b0;
   else
-    ResetRxCIrq_sync1 <=#Tp SetRxCIrq_sync2;
+    ResetRxCIrq_sync1 <= SetRxCIrq_sync2;
 end
 
 always @ (posedge RxClk or posedge Reset)
 begin
   if(Reset)
-    ResetRxCIrq_sync2 <=#Tp 1'b0;
+    ResetRxCIrq_sync2 <= 1'b0;
   else
-    ResetRxCIrq_sync2 <=#Tp ResetRxCIrq_sync1;
+    ResetRxCIrq_sync2 <= ResetRxCIrq_sync1;
 end
 
 always @ (posedge RxClk or posedge Reset)
 begin
   if(Reset)
-    ResetRxCIrq_sync3 <=#Tp 1'b0;
+    ResetRxCIrq_sync3 <= 1'b0;
   else
-    ResetRxCIrq_sync3 <=#Tp ResetRxCIrq_sync2;
+    ResetRxCIrq_sync3 <= ResetRxCIrq_sync2;
 end
 
 
@@ -1086,10 +1084,10 @@ begin
     irq_txb <= 1'b0;
   else
   if(TxB_IRQ)
-    irq_txb <= #Tp 1'b1;
+    irq_txb <=  1'b1;
   else
   if(INT_SOURCE_Wr[0] & DataIn[0])
-    irq_txb <= #Tp 1'b0;
+    irq_txb <=  1'b0;
 end
 
 always @ (posedge Clk or posedge Reset)
@@ -1098,10 +1096,10 @@ begin
     irq_txe <= 1'b0;
   else
   if(TxE_IRQ)
-    irq_txe <= #Tp 1'b1;
+    irq_txe <=  1'b1;
   else
   if(INT_SOURCE_Wr[0] & DataIn[1])
-    irq_txe <= #Tp 1'b0;
+    irq_txe <=  1'b0;
 end
 
 always @ (posedge Clk or posedge Reset)
@@ -1110,10 +1108,10 @@ begin
     irq_rxb <= 1'b0;
   else
   if(RxB_IRQ)
-    irq_rxb <= #Tp 1'b1;
+    irq_rxb <=  1'b1;
   else
   if(INT_SOURCE_Wr[0] & DataIn[2])
-    irq_rxb <= #Tp 1'b0;
+    irq_rxb <=  1'b0;
 end
 
 always @ (posedge Clk or posedge Reset)
@@ -1122,10 +1120,10 @@ begin
     irq_rxe <= 1'b0;
   else
   if(RxE_IRQ)
-    irq_rxe <= #Tp 1'b1;
+    irq_rxe <=  1'b1;
   else
   if(INT_SOURCE_Wr[0] & DataIn[3])
-    irq_rxe <= #Tp 1'b0;
+    irq_rxe <=  1'b0;
 end
 
 always @ (posedge Clk or posedge Reset)
@@ -1134,10 +1132,10 @@ begin
     irq_busy <= 1'b0;
   else
   if(Busy_IRQ)
-    irq_busy <= #Tp 1'b1;
+    irq_busy <=  1'b1;
   else
   if(INT_SOURCE_Wr[0] & DataIn[4])
-    irq_busy <= #Tp 1'b0;
+    irq_busy <=  1'b0;
 end
 
 always @ (posedge Clk or posedge Reset)
@@ -1146,10 +1144,10 @@ begin
     irq_txc <= 1'b0;
   else
   if(SetTxCIrq)
-    irq_txc <= #Tp 1'b1;
+    irq_txc <=  1'b1;
   else
   if(INT_SOURCE_Wr[0] & DataIn[5])
-    irq_txc <= #Tp 1'b0;
+    irq_txc <=  1'b0;
 end
 
 always @ (posedge Clk or posedge Reset)
@@ -1158,10 +1156,10 @@ begin
     irq_rxc <= 1'b0;
   else
   if(SetRxCIrq)
-    irq_rxc <= #Tp 1'b1;
+    irq_rxc <=  1'b1;
   else
   if(INT_SOURCE_Wr[0] & DataIn[6])
-    irq_rxc <= #Tp 1'b0;
+    irq_rxc <=  1'b0;
 end
 
 // Generating interrupt signal

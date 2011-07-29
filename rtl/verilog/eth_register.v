@@ -94,13 +94,13 @@ reg    [WIDTH-1:0] DataOut;
 always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
-    DataOut<=#1 RESET_VALUE;
+    DataOut<= RESET_VALUE;
   else
   if(SyncReset)
-    DataOut<=#1 RESET_VALUE;
+    DataOut<= RESET_VALUE;
   else
   if(Write)                         // write
-    DataOut<=#1 DataIn;
+    DataOut<= DataIn;
 end
 
 

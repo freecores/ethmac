@@ -89,7 +89,6 @@ module eth_cop
  	s2_wb_dat_o
 );
 
-parameter Tp=1;
 parameter ETH_BASE     = 32'hd0000000;
 parameter ETH_WIDTH    = 32'h800;
 parameter MEMORY_BASE  = 32'h2000;
@@ -166,98 +165,98 @@ always @ (posedge wb_clk_i or posedge wb_rst_i)
 begin
   if(wb_rst_i)
     begin
-      m1_in_progress <=#Tp 0;
-      m2_in_progress <=#Tp 0;
-      s1_wb_adr_o    <=#Tp 0;
-      s1_wb_sel_o    <=#Tp 0;
-      s1_wb_we_o     <=#Tp 0;
-      s1_wb_dat_o    <=#Tp 0;
-      s1_wb_cyc_o    <=#Tp 0;
-      s1_wb_stb_o    <=#Tp 0;
-      s2_wb_adr_o    <=#Tp 0;
-      s2_wb_sel_o    <=#Tp 0;
-      s2_wb_we_o     <=#Tp 0;
-      s2_wb_dat_o    <=#Tp 0;
-      s2_wb_cyc_o    <=#Tp 0;
-      s2_wb_stb_o    <=#Tp 0;
+      m1_in_progress <= 0;
+      m2_in_progress <= 0;
+      s1_wb_adr_o    <= 0;
+      s1_wb_sel_o    <= 0;
+      s1_wb_we_o     <= 0;
+      s1_wb_dat_o    <= 0;
+      s1_wb_cyc_o    <= 0;
+      s1_wb_stb_o    <= 0;
+      s2_wb_adr_o    <= 0;
+      s2_wb_sel_o    <= 0;
+      s2_wb_we_o     <= 0;
+      s2_wb_dat_o    <= 0;
+      s2_wb_cyc_o    <= 0;
+      s2_wb_stb_o    <= 0;
     end
   else
     begin
       case({m1_in_progress, m2_in_progress, m1_req, m2_req, m_wb_access_finished})  // synopsys_full_case synopsys_paralel_case
         5'b00_10_0, 5'b00_11_0 :
           begin
-            m1_in_progress <=#Tp 1'b1;  // idle: m1 or (m1 & m2) want access: m1 -> m
+            m1_in_progress <= 1'b1;  // idle: m1 or (m1 & m2) want access: m1 -> m
             if(m1_addressed_s1)
               begin
-                s1_wb_adr_o <=#Tp m1_wb_adr_i;
-                s1_wb_sel_o <=#Tp m1_wb_sel_i;
-                s1_wb_we_o  <=#Tp m1_wb_we_i;
-                s1_wb_dat_o <=#Tp m1_wb_dat_i;
-                s1_wb_cyc_o <=#Tp 1'b1;
-                s1_wb_stb_o <=#Tp 1'b1;
+                s1_wb_adr_o <= m1_wb_adr_i;
+                s1_wb_sel_o <= m1_wb_sel_i;
+                s1_wb_we_o  <= m1_wb_we_i;
+                s1_wb_dat_o <= m1_wb_dat_i;
+                s1_wb_cyc_o <= 1'b1;
+                s1_wb_stb_o <= 1'b1;
               end
             else if(m1_addressed_s2)
               begin
-                s2_wb_adr_o <=#Tp m1_wb_adr_i;
-                s2_wb_sel_o <=#Tp m1_wb_sel_i;
-                s2_wb_we_o  <=#Tp m1_wb_we_i;
-                s2_wb_dat_o <=#Tp m1_wb_dat_i;
-                s2_wb_cyc_o <=#Tp 1'b1;
-                s2_wb_stb_o <=#Tp 1'b1;
+                s2_wb_adr_o <= m1_wb_adr_i;
+                s2_wb_sel_o <= m1_wb_sel_i;
+                s2_wb_we_o  <= m1_wb_we_i;
+                s2_wb_dat_o <= m1_wb_dat_i;
+                s2_wb_cyc_o <= 1'b1;
+                s2_wb_stb_o <= 1'b1;
               end
             else
               $display("(%t)(%m)WISHBONE ERROR: Unspecified address space accessed", $time);
           end
         5'b00_01_0 :
           begin
-            m2_in_progress <=#Tp 1'b1;  // idle: m2 wants access: m2 -> m
+            m2_in_progress <= 1'b1;  // idle: m2 wants access: m2 -> m
             if(m2_addressed_s1)
               begin
-                s1_wb_adr_o <=#Tp m2_wb_adr_i;
-                s1_wb_sel_o <=#Tp m2_wb_sel_i;
-                s1_wb_we_o  <=#Tp m2_wb_we_i;
-                s1_wb_dat_o <=#Tp m2_wb_dat_i;
-                s1_wb_cyc_o <=#Tp 1'b1;
-                s1_wb_stb_o <=#Tp 1'b1;
+                s1_wb_adr_o <= m2_wb_adr_i;
+                s1_wb_sel_o <= m2_wb_sel_i;
+                s1_wb_we_o  <= m2_wb_we_i;
+                s1_wb_dat_o <= m2_wb_dat_i;
+                s1_wb_cyc_o <= 1'b1;
+                s1_wb_stb_o <= 1'b1;
               end
             else if(m2_addressed_s2)
               begin
-                s2_wb_adr_o <=#Tp m2_wb_adr_i;
-                s2_wb_sel_o <=#Tp m2_wb_sel_i;
-                s2_wb_we_o  <=#Tp m2_wb_we_i;
-                s2_wb_dat_o <=#Tp m2_wb_dat_i;
-                s2_wb_cyc_o <=#Tp 1'b1;
-                s2_wb_stb_o <=#Tp 1'b1;
+                s2_wb_adr_o <= m2_wb_adr_i;
+                s2_wb_sel_o <= m2_wb_sel_i;
+                s2_wb_we_o  <= m2_wb_we_i;
+                s2_wb_dat_o <= m2_wb_dat_i;
+                s2_wb_cyc_o <= 1'b1;
+                s2_wb_stb_o <= 1'b1;
               end
             else
               $display("(%t)(%m)WISHBONE ERROR: Unspecified address space accessed", $time);
           end
         5'b10_10_1, 5'b10_11_1 :
           begin
-            m1_in_progress <=#Tp 1'b0;  // m1 in progress. Cycle is finished. Send ack or err to m1.
+            m1_in_progress <= 1'b0;  // m1 in progress. Cycle is finished. Send ack or err to m1.
             if(m1_addressed_s1)
               begin
-                s1_wb_cyc_o <=#Tp 1'b0;
-                s1_wb_stb_o <=#Tp 1'b0;
+                s1_wb_cyc_o <= 1'b0;
+                s1_wb_stb_o <= 1'b0;
               end
             else if(m1_addressed_s2)
               begin
-                s2_wb_cyc_o <=#Tp 1'b0;
-                s2_wb_stb_o <=#Tp 1'b0;
+                s2_wb_cyc_o <= 1'b0;
+                s2_wb_stb_o <= 1'b0;
               end
           end
         5'b01_01_1, 5'b01_11_1 :
           begin
-            m2_in_progress <=#Tp 1'b0;  // m2 in progress. Cycle is finished. Send ack or err to m2.
+            m2_in_progress <= 1'b0;  // m2 in progress. Cycle is finished. Send ack or err to m2.
             if(m2_addressed_s1)
               begin
-                s1_wb_cyc_o <=#Tp 1'b0;
-                s1_wb_stb_o <=#Tp 1'b0;
+                s1_wb_cyc_o <= 1'b0;
+                s1_wb_stb_o <= 1'b0;
               end
             else if(m2_addressed_s2)
               begin
-                s2_wb_cyc_o <=#Tp 1'b0;
-                s2_wb_stb_o <=#Tp 1'b0;
+                s2_wb_cyc_o <= 1'b0;
+                s2_wb_stb_o <= 1'b0;
               end
           end
       endcase
@@ -344,13 +343,13 @@ integer cnt;
 always @ (posedge wb_clk_i or posedge wb_rst_i)
 begin
   if(wb_rst_i)
-    cnt <=#Tp 0;
+    cnt <= 0;
   else
   if(s1_wb_ack_i | s1_wb_err_i | s2_wb_ack_i | s2_wb_err_i)
-    cnt <=#Tp 0;
+    cnt <= 0;
   else
   if(s1_wb_cyc_o | s2_wb_cyc_o)
-    cnt <=#Tp cnt+1;
+    cnt <= cnt+1;
 end
 
 always @ (posedge wb_clk_i)

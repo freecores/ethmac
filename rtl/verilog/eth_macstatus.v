@@ -126,8 +126,6 @@ module eth_macstatus(
 
 
 
-parameter Tp = 1;
-
 
 input         MRxClk;
 input         Reset;
@@ -205,13 +203,13 @@ wire          SetInvalidSymbol; // Invalid symbol was received during reception 
 always @ (posedge MRxClk or posedge Reset)
 begin
   if(Reset)
-    LatchedCrcError <=#Tp 1'b0;
+    LatchedCrcError <= 1'b0;
   else
   if(RxStateSFD)
-    LatchedCrcError <=#Tp 1'b0;
+    LatchedCrcError <= 1'b0;
   else
   if(RxStateData[0])
-    LatchedCrcError <=#Tp RxCrcError & ~RxByteCntEq0;
+    LatchedCrcError <= RxCrcError & ~RxByteCntEq0;
 end
 
 
@@ -219,12 +217,12 @@ end
 always @ (posedge MRxClk or posedge Reset)
 begin
   if(Reset)
-    LatchedMRxErr <=#Tp 1'b0;
+    LatchedMRxErr <= 1'b0;
   else
   if(MRxErr & MRxDV & (RxStatePreamble | RxStateSFD | (|RxStateData) | RxStateIdle & ~Transmitting))
-    LatchedMRxErr <=#Tp 1'b1;
+    LatchedMRxErr <= 1'b1;
   else
-    LatchedMRxErr <=#Tp 1'b0;
+    LatchedMRxErr <= 1'b0;
 end
 
 
@@ -249,9 +247,9 @@ assign TakeSample = (|RxStateData)   & (~MRxDV)                    |
 always @ (posedge MRxClk or posedge Reset)
 begin
   if(Reset)
-    LoadRxStatus <=#Tp 1'b0;
+    LoadRxStatus <= 1'b0;
   else
-    LoadRxStatus <=#Tp TakeSample;
+    LoadRxStatus <= TakeSample;
 end
 
 
@@ -260,9 +258,9 @@ end
 always @ (posedge MRxClk or posedge Reset)
 begin
   if(Reset)
-    ReceiveEnd  <=#Tp 1'b0;
+    ReceiveEnd  <= 1'b0;
   else
-    ReceiveEnd  <=#Tp LoadRxStatus;                     
+    ReceiveEnd  <= LoadRxStatus;                     
 end
 
 
@@ -274,13 +272,13 @@ assign SetInvalidSymbol = MRxDV & MRxErr & MRxD[3:0] == 4'he;
 always @ (posedge MRxClk or posedge Reset)
 begin
   if(Reset)
-    InvalidSymbol <=#Tp 1'b0;
+    InvalidSymbol <= 1'b0;
   else
   if(LoadRxStatus & ~SetInvalidSymbol)
-    InvalidSymbol <=#Tp 1'b0;
+    InvalidSymbol <= 1'b0;
   else
   if(SetInvalidSymbol)
-    InvalidSymbol <=#Tp 1'b1;
+    InvalidSymbol <= 1'b1;
 end
 
 
@@ -292,26 +290,26 @@ reg RxColWindow;
 always @ (posedge MRxClk or posedge Reset)
 begin
   if(Reset)
-    RxLateCollision <=#Tp 1'b0;
+    RxLateCollision <= 1'b0;
   else
   if(LoadRxStatus)
-    RxLateCollision <=#Tp 1'b0;
+    RxLateCollision <= 1'b0;
   else
   if(Collision & (~r_FullD) & (~RxColWindow | r_RecSmall))
-    RxLateCollision <=#Tp 1'b1;
+    RxLateCollision <= 1'b1;
 end
 
 // Collision Window
 always @ (posedge MRxClk or posedge Reset)
 begin
   if(Reset)
-    RxColWindow <=#Tp 1'b1;
+    RxColWindow <= 1'b1;
   else
   if(~Collision & RxByteCnt[5:0] == CollValid[5:0] & RxStateData[1])
-    RxColWindow <=#Tp 1'b0;
+    RxColWindow <= 1'b0;
   else
   if(RxStateIdle)
-    RxColWindow <=#Tp 1'b1;
+    RxColWindow <= 1'b1;
 end
 
 
@@ -320,13 +318,13 @@ reg ShortFrame;
 always @ (posedge MRxClk or posedge Reset)
 begin
   if(Reset)
-    ShortFrame <=#Tp 1'b0;
+    ShortFrame <= 1'b0;
   else
   if(LoadRxStatus)
-    ShortFrame <=#Tp 1'b0;
+    ShortFrame <= 1'b0;
   else
   if(TakeSample)
-    ShortFrame <=#Tp RxByteCnt[15:0] < r_MinFL[15:0];
+    ShortFrame <= RxByteCnt[15:0] < r_MinFL[15:0];
 end
 
 
@@ -335,13 +333,13 @@ reg DribbleNibble;
 always @ (posedge MRxClk or posedge Reset)
 begin
   if(Reset)
-    DribbleNibble <=#Tp 1'b0;
+    DribbleNibble <= 1'b0;
   else
   if(RxStateSFD)
-    DribbleNibble <=#Tp 1'b0;
+    DribbleNibble <= 1'b0;
   else
   if(~MRxDV & RxStateData[1])
-    DribbleNibble <=#Tp 1'b1;
+    DribbleNibble <= 1'b1;
 end
 
 
@@ -349,13 +347,13 @@ reg ReceivedPacketTooBig;
 always @ (posedge MRxClk or posedge Reset)
 begin
   if(Reset)
-    ReceivedPacketTooBig <=#Tp 1'b0;
+    ReceivedPacketTooBig <= 1'b0;
   else
   if(LoadRxStatus)
-    ReceivedPacketTooBig <=#Tp 1'b0;
+    ReceivedPacketTooBig <= 1'b0;
   else
   if(TakeSample)
-    ReceivedPacketTooBig <=#Tp ~r_HugEn & RxByteCnt[15:0] > r_MaxFL[15:0];
+    ReceivedPacketTooBig <= ~r_HugEn & RxByteCnt[15:0] > r_MaxFL[15:0];
 end
 
 
@@ -364,10 +362,10 @@ end
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    RetryCntLatched <=#Tp 4'h0;
+    RetryCntLatched <= 4'h0;
   else
   if(StartTxDone | StartTxAbort)
-    RetryCntLatched <=#Tp RetryCnt;
+    RetryCntLatched <= RetryCnt;
 end
 
 
@@ -375,10 +373,10 @@ end
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    RetryLimit <=#Tp 1'h0;
+    RetryLimit <= 1'h0;
   else
   if(StartTxDone | StartTxAbort)
-    RetryLimit <=#Tp MaxCollisionOccured;
+    RetryLimit <= MaxCollisionOccured;
 end
 
 
@@ -386,10 +384,10 @@ end
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    LateCollLatched <=#Tp 1'b0;
+    LateCollLatched <= 1'b0;
   else
   if(StartTxDone | StartTxAbort)
-    LateCollLatched <=#Tp LateCollision;
+    LateCollLatched <= LateCollision;
 end
 
 
@@ -398,13 +396,13 @@ end
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    DeferLatched <=#Tp 1'b0;
+    DeferLatched <= 1'b0;
   else
   if(DeferIndication)
-    DeferLatched <=#Tp 1'b1;
+    DeferLatched <= 1'b1;
   else
   if(RstDeferLatched)
-    DeferLatched <=#Tp 1'b0;
+    DeferLatched <= 1'b0;
 end
 
 
@@ -412,13 +410,13 @@ end
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    CarrierSenseLost <=#Tp 1'b0;
+    CarrierSenseLost <= 1'b0;
   else
   if((StatePreamble | (|StateData)) & ~CarrierSense & ~Loopback & ~Collision & ~r_FullD)
-    CarrierSenseLost <=#Tp 1'b1;
+    CarrierSenseLost <= 1'b1;
   else
   if(TxStartFrm)
-    CarrierSenseLost <=#Tp 1'b0;
+    CarrierSenseLost <= 1'b0;
 end
 
 

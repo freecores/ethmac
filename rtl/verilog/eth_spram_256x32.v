@@ -272,7 +272,7 @@ module eth_spram_256x32(
 	// read operation
 	always@(posedge clk)
 	  if (ce) // && !we)
-		raddr <= #1 addr;    // read address needs to be registered to read clock
+		raddr <=  addr; // read address needs to be registered to read clock
 
 	assign #1 q = rst ? {32{1'b0}} : {mem3[raddr], mem2[raddr], mem1[raddr], mem0[raddr]};
 
@@ -280,14 +280,14 @@ module eth_spram_256x32(
 	always@(posedge clk)
         begin
 		if (ce && we[3])
-			mem3[addr] <= #1 di[31:24];
+		  mem3[addr] <=  di[31:24];
 		if (ce && we[2])
-			mem2[addr] <= #1 di[23:16];
+		  mem2[addr] <=  di[23:16];
 		if (ce && we[1])
-			mem1[addr] <= #1 di[15: 8];
+		  mem1[addr] <=  di[15: 8];
 		if (ce && we[0])
-			mem0[addr] <= #1 di[ 7: 0];
-        end
+		  mem0[addr] <=  di[ 7: 0];
+	     end
 
 	// Task prints range of memory
 	// *** Remember that tasks are non reentrant, don't call this task in parallel for multiple instantiations. 

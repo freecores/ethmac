@@ -82,8 +82,6 @@
 module eth_random (MTxClk, Reset, StateJam, StateJam_q, RetryCnt, NibCnt, ByteCnt, 
                    RandomEq0, RandomEqByteCnt);
 
-parameter Tp = 1;
-
 input MTxClk;
 input Reset;
 input StateJam;
@@ -103,9 +101,9 @@ reg  [9:0] RandomLatched;
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    x[9:0] <= #Tp 0;
+    x[9:0] <=  0;
   else
-    x[9:0] <= #Tp {x[8:0], Feedback};
+    x[9:0] <=  {x[8:0], Feedback};
 end
 
 assign Feedback = ~(x[2] ^ x[9]);
@@ -125,11 +123,11 @@ assign Random [9] = (RetryCnt > 9) ? x[9] : 1'b0;
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
-    RandomLatched <= #Tp 10'h000;
+    RandomLatched <=  10'h000;
   else
     begin
       if(StateJam & StateJam_q)
-        RandomLatched <= #Tp Random;
+        RandomLatched <=  Random;
     end
 end
 

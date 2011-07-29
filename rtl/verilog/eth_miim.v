@@ -135,8 +135,6 @@ output        WCtrlDataStart;     // This signals resets the WCTRLDATA bit in th
 output        RStatStart;         // This signal resets the RSTAT BIT in the MIIM Command register
 output        UpdateMIIRX_DATAReg;// Updates MII RX_DATA register with read data
 
-parameter Tp = 1;
-
 
 reg           Nvalid;
 reg           EndBusy_d;          // Pre-end Busy signal
@@ -198,13 +196,13 @@ always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
     begin
-      EndBusy_d <= #Tp 1'b0;
-      EndBusy <= #Tp 1'b0;
+      EndBusy_d <=  1'b0;
+      EndBusy <=  1'b0;
     end
   else
     begin
-      EndBusy_d <= #Tp ~InProgress_q2 & InProgress_q3;
-      EndBusy   <= #Tp EndBusy_d;
+      EndBusy_d <=  ~InProgress_q2 & InProgress_q3;
+      EndBusy   <=  EndBusy_d;
     end
 end
 
@@ -213,12 +211,12 @@ end
 always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
-    UpdateMIIRX_DATAReg <= #Tp 0;
+    UpdateMIIRX_DATAReg <=  0;
   else
   if(EndBusy & ~WCtrlDataStart_q)
-    UpdateMIIRX_DATAReg <= #Tp 1;
+    UpdateMIIRX_DATAReg <=  1;
   else
-    UpdateMIIRX_DATAReg <= #Tp 0;    
+    UpdateMIIRX_DATAReg <=  0;    
 end
 
 
@@ -228,32 +226,32 @@ always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
     begin
-      WCtrlData_q1 <= #Tp 1'b0;
-      WCtrlData_q2 <= #Tp 1'b0;
-      WCtrlData_q3 <= #Tp 1'b0;
+      WCtrlData_q1 <=  1'b0;
+      WCtrlData_q2 <=  1'b0;
+      WCtrlData_q3 <=  1'b0;
       
-      RStat_q1 <= #Tp 1'b0;
-      RStat_q2 <= #Tp 1'b0;
-      RStat_q3 <= #Tp 1'b0;
+      RStat_q1 <=  1'b0;
+      RStat_q2 <=  1'b0;
+      RStat_q3 <=  1'b0;
 
-      ScanStat_q1  <= #Tp 1'b0;
-      ScanStat_q2  <= #Tp 1'b0;
-      SyncStatMdcEn <= #Tp 1'b0;
+      ScanStat_q1  <=  1'b0;
+      ScanStat_q2  <=  1'b0;
+      SyncStatMdcEn <=  1'b0;
     end
   else
     begin
-      WCtrlData_q1 <= #Tp WCtrlData;
-      WCtrlData_q2 <= #Tp WCtrlData_q1;
-      WCtrlData_q3 <= #Tp WCtrlData_q2;
+      WCtrlData_q1 <=  WCtrlData;
+      WCtrlData_q2 <=  WCtrlData_q1;
+      WCtrlData_q3 <=  WCtrlData_q2;
 
-      RStat_q1 <= #Tp RStat;
-      RStat_q2 <= #Tp RStat_q1;
-      RStat_q3 <= #Tp RStat_q2;
+      RStat_q1 <=  RStat;
+      RStat_q2 <=  RStat_q1;
+      RStat_q3 <=  RStat_q2;
 
-      ScanStat_q1  <= #Tp ScanStat;
-      ScanStat_q2  <= #Tp ScanStat_q1;
+      ScanStat_q1  <=  ScanStat;
+      ScanStat_q2  <=  ScanStat_q1;
       if(MdcEn)
-        SyncStatMdcEn  <= #Tp ScanStat_q2;
+        SyncStatMdcEn  <=  ScanStat_q2;
     end
 end
 
@@ -263,24 +261,24 @@ always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
     begin
-      WCtrlDataStart <= #Tp 1'b0;
-      WCtrlDataStart_q <= #Tp 1'b0;
-      RStatStart <= #Tp 1'b0;
+      WCtrlDataStart <=  1'b0;
+      WCtrlDataStart_q <=  1'b0;
+      RStatStart <=  1'b0;
     end
   else
     begin
       if(EndBusy)
         begin
-          WCtrlDataStart <= #Tp 1'b0;
-          RStatStart <= #Tp 1'b0;
+          WCtrlDataStart <=  1'b0;
+          RStatStart <=  1'b0;
         end
       else
         begin
           if(WCtrlData_q2 & ~WCtrlData_q3)
-            WCtrlDataStart <= #Tp 1'b1;
+            WCtrlDataStart <=  1'b1;
           if(RStat_q2 & ~RStat_q3)
-            RStatStart <= #Tp 1'b1;
-          WCtrlDataStart_q <= #Tp WCtrlDataStart;
+            RStatStart <=  1'b1;
+          WCtrlDataStart_q <=  WCtrlDataStart;
         end
     end
 end 
@@ -290,17 +288,17 @@ end
 always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
-    Nvalid <= #Tp 1'b0;
+    Nvalid <=  1'b0;
   else
     begin
       if(~InProgress_q2 & InProgress_q3)
         begin
-          Nvalid <= #Tp 1'b0;
+          Nvalid <=  1'b0;
         end
       else
         begin
           if(ScanStat_q2  & ~SyncStatMdcEn)
-            Nvalid <= #Tp 1'b1;
+            Nvalid <=  1'b1;
         end
     end
 end 
@@ -310,40 +308,40 @@ always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
     begin
-      WCtrlDataStart_q1 <= #Tp 1'b0;
-      WCtrlDataStart_q2 <= #Tp 1'b0;
+      WCtrlDataStart_q1 <=  1'b0;
+      WCtrlDataStart_q2 <=  1'b0;
 
-      RStatStart_q1 <= #Tp 1'b0;
-      RStatStart_q2 <= #Tp 1'b0;
+      RStatStart_q1 <=  1'b0;
+      RStatStart_q2 <=  1'b0;
 
-      InProgress_q1 <= #Tp 1'b0;
-      InProgress_q2 <= #Tp 1'b0;
-      InProgress_q3 <= #Tp 1'b0;
+      InProgress_q1 <=  1'b0;
+      InProgress_q2 <=  1'b0;
+      InProgress_q3 <=  1'b0;
 
-  	  LatchByte0_d <= #Tp 1'b0;
-  	  LatchByte1_d <= #Tp 1'b0;
+  	  LatchByte0_d <=  1'b0;
+  	  LatchByte1_d <=  1'b0;
 
-  	  LatchByte <= #Tp 2'b00;
+  	  LatchByte <=  2'b00;
     end
   else
     begin
       if(MdcEn)
         begin
-          WCtrlDataStart_q1 <= #Tp WCtrlDataStart;
-          WCtrlDataStart_q2 <= #Tp WCtrlDataStart_q1;
+          WCtrlDataStart_q1 <=  WCtrlDataStart;
+          WCtrlDataStart_q2 <=  WCtrlDataStart_q1;
 
-          RStatStart_q1 <= #Tp RStatStart;
-          RStatStart_q2 <= #Tp RStatStart_q1;
+          RStatStart_q1 <=  RStatStart;
+          RStatStart_q2 <=  RStatStart_q1;
 
-          LatchByte[0] <= #Tp LatchByte0_d;
-          LatchByte[1] <= #Tp LatchByte1_d;
+          LatchByte[0] <=  LatchByte0_d;
+          LatchByte[1] <=  LatchByte1_d;
 
-          LatchByte0_d <= #Tp LatchByte0_d2;
-          LatchByte1_d <= #Tp LatchByte1_d2;
+          LatchByte0_d <=  LatchByte0_d2;
+          LatchByte1_d <=  LatchByte1_d2;
 
-          InProgress_q1 <= #Tp InProgress;
-          InProgress_q2 <= #Tp InProgress_q1;
-          InProgress_q3 <= #Tp InProgress_q2;
+          InProgress_q1 <=  InProgress;
+          InProgress_q2 <=  InProgress_q1;
+          InProgress_q3 <=  InProgress_q2;
         end
     end
 end 
@@ -365,8 +363,8 @@ always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
     begin
-      InProgress <= #Tp 1'b0;
-      WriteOp <= #Tp 1'b0;
+      InProgress <=  1'b0;
+      WriteOp <=  1'b0;
     end
   else
     begin
@@ -375,15 +373,15 @@ begin
           if(StartOp)
             begin
               if(~InProgress)
-                WriteOp <= #Tp WriteDataOp;
-              InProgress <= #Tp 1'b1;
+                WriteOp <=  WriteDataOp;
+              InProgress <=  1'b1;
             end
           else
             begin
               if(EndOp)
                 begin
-                  InProgress <= #Tp 1'b0;
-                  WriteOp <= #Tp 1'b0;
+                  InProgress <=  1'b0;
+                  WriteOp <=  1'b0;
                 end
             end
         end
@@ -396,7 +394,7 @@ end
 always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
-    BitCounter[6:0] <= #Tp 7'h0;
+    BitCounter[6:0] <=  7'h0;
   else
     begin
       if(MdcEn)
@@ -404,12 +402,12 @@ begin
           if(InProgress)
             begin
               if(NoPre & ( BitCounter == 7'h0 ))
-                BitCounter[6:0] <= #Tp 7'h21;
+                BitCounter[6:0] <=  7'h21;
               else
-                BitCounter[6:0] <= #Tp BitCounter[6:0] + 1'b1;
+                BitCounter[6:0] <=  BitCounter[6:0] + 1'b1;
             end
           else
-            BitCounter[6:0] <= #Tp 7'h0;
+            BitCounter[6:0] <=  7'h0;
         end
     end
 end
@@ -430,20 +428,17 @@ assign LatchByte0_d2 = InProgress & ~WriteOp & BitCounter == 7'h3F;
 
 
 // Connecting the Clock Generator Module
-eth_clockgen #(.Tp(Tp))
-clkgen(.Clk(Clk), .Reset(Reset), .Divider(Divider[7:0]), .MdcEn(MdcEn), .MdcEn_n(MdcEn_n), .Mdc(Mdc) 
+eth_clockgen clkgen(.Clk(Clk), .Reset(Reset), .Divider(Divider[7:0]), .MdcEn(MdcEn), .MdcEn_n(MdcEn_n), .Mdc(Mdc) 
                    );
 
 // Connecting the Shift Register Module
-eth_shiftreg #(.Tp(Tp))
-shftrg(.Clk(Clk), .Reset(Reset), .MdcEn_n(MdcEn_n), .Mdi(Mdi), .Fiad(Fiad), .Rgad(Rgad), 
+eth_shiftreg shftrg(.Clk(Clk), .Reset(Reset), .MdcEn_n(MdcEn_n), .Mdi(Mdi), .Fiad(Fiad), .Rgad(Rgad), 
                     .CtrlData(CtrlData), .WriteOp(WriteOp), .ByteSelect(ByteSelect), .LatchByte(LatchByte), 
                     .ShiftedBit(ShiftedBit), .Prsd(Prsd), .LinkFail(LinkFail)
                    );
 
 // Connecting the Output Control Module
-eth_outputcontrol #(.Tp(Tp))
-outctrl(.Clk(Clk), .Reset(Reset), .MdcEn_n(MdcEn_n), .InProgress(InProgress), 
+eth_outputcontrol outctrl(.Clk(Clk), .Reset(Reset), .MdcEn_n(MdcEn_n), .InProgress(InProgress), 
                           .ShiftedBit(ShiftedBit), .BitCounter(BitCounter), .WriteOp(WriteOp), .NoPre(NoPre), 
                           .Mdo(Mdo), .MdoEn(MdoEn)
                          );

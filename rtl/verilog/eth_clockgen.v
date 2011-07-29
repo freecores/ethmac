@@ -70,8 +70,6 @@
 
 module eth_clockgen(Clk, Reset, Divider, MdcEn, MdcEn_n, Mdc);
 
-parameter Tp=1;
-
 input       Clk;              // Input clock (Host clock)
 input       Reset;            // Reset signal
 input [7:0] Divider;          // Divider (input clock will be divided by the Divider[7:0])
@@ -96,15 +94,15 @@ assign CounterPreset[7:0] = (TempDivider[7:0]>>1) - 1'b1;           // We are co
 always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
-    Counter[7:0] <= #Tp 8'h1;
+    Counter[7:0] <=  8'h1;
   else
     begin
       if(CountEq0)
         begin
-          Counter[7:0] <= #Tp CounterPreset[7:0];
+          Counter[7:0] <=  CounterPreset[7:0];
         end
       else
-        Counter[7:0] <= #Tp Counter - 8'h1;
+        Counter[7:0] <=  Counter - 8'h1;
     end
 end
 
@@ -113,11 +111,11 @@ end
 always @ (posedge Clk or posedge Reset)
 begin
   if(Reset)
-    Mdc <= #Tp 1'b0;
+    Mdc <=  1'b0;
   else
     begin
       if(CountEq0)
-        Mdc <= #Tp ~Mdc;
+        Mdc <=  ~Mdc;
     end
 end
 

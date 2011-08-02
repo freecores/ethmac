@@ -157,7 +157,7 @@ begin
         NibCnt <=  16'h0;
       else
       if(IncrementNibCnt)
-        NibCnt <=  NibCnt + 1'b1;
+        NibCnt <=  NibCnt + 16'd1;
      end
 end
 
@@ -165,11 +165,11 @@ end
 assign NibCntEq7   = &NibCnt[2:0];
 assign NibCntEq15  = &NibCnt[3:0];
 
-assign NibbleMinFl = NibCnt >= (((MinFL-3'h4)<<1) -1);  // FCS should not be included in NibbleMinFl
+assign NibbleMinFl = NibCnt >= (((MinFL-16'd4)<<1) -1);  // FCS should not be included in NibbleMinFl
 
-assign ExcessiveDeferCnt = NibCnt[13:0] == 16'h17b7;
+assign ExcessiveDeferCnt = NibCnt[13:0] == 14'h17b7;
 
-assign ExcessiveDefer  = NibCnt[13:0] == 16'h17b7 & ~ExDfrEn;   // 6071 nibbles
+assign ExcessiveDefer  = NibCnt[13:0] == 14'h17b7 & ~ExDfrEn;   // 6071 nibbles
 
 assign IncrementByteCnt = StateData[1] & ~ByteCntMax
                         | StateBackOff & (&NibCnt[6:0])
@@ -189,7 +189,7 @@ begin
         ByteCnt[15:0] <=  16'h0;
       else
       if(IncrementByteCnt)
-        ByteCnt[15:0] <=  ByteCnt[15:0] + 1'b1;
+        ByteCnt[15:0] <=  ByteCnt[15:0] + 16'd1;
     end
 end
 
@@ -210,7 +210,7 @@ begin
         DlyCrcCnt <=  3'h0;
       else
       if(DlyCrcEn & (StateSFD | StateData[1] & (|DlyCrcCnt[2:0])))
-        DlyCrcCnt <=  DlyCrcCnt + 1'b1;
+        DlyCrcCnt <=  DlyCrcCnt + 3'd1;
     end
 end
 

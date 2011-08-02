@@ -144,30 +144,30 @@ assign IncrementByteCounter = ~ResetByteCounter & MRxDV &
 always @ (posedge MRxClk or posedge Reset)
 begin
   if(Reset)
-    ByteCnt[15:0] <=  16'h0;
+    ByteCnt[15:0] <=  16'd0;
   else
     begin
       if(ResetByteCounter)
-        ByteCnt[15:0] <=  16'h0;
+        ByteCnt[15:0] <=  16'd0;
       else
       if(IncrementByteCounter)
-        ByteCnt[15:0] <=  ByteCnt[15:0] + 1'b1;
+        ByteCnt[15:0] <=  ByteCnt[15:0] + 16'd1;
      end
 end
 
-assign ByteCntDelayed = ByteCnt + 3'h4;
-assign ByteCntOut = DlyCrcEn? ByteCntDelayed : ByteCnt;
+assign ByteCntDelayed = ByteCnt + 16'd4;
+assign ByteCntOut = DlyCrcEn ? ByteCntDelayed : ByteCnt;
 
-assign ByteCntEq0       = ByteCnt == 16'h0;
-assign ByteCntEq1       = ByteCnt == 16'h1;
-assign ByteCntEq2       = ByteCnt == 16'h2; 
-assign ByteCntEq3       = ByteCnt == 16'h3; 
-assign ByteCntEq4       = ByteCnt == 16'h4; 
-assign ByteCntEq5       = ByteCnt == 16'h5; 
-assign ByteCntEq6       = ByteCnt == 16'h6;
-assign ByteCntEq7       = ByteCnt == 16'h7;
-assign ByteCntGreat2    = ByteCnt >  16'h2;
-assign ByteCntSmall7    = ByteCnt <  16'h7;
+assign ByteCntEq0       = ByteCnt == 16'd0;
+assign ByteCntEq1       = ByteCnt == 16'd1;
+assign ByteCntEq2       = ByteCnt == 16'd2; 
+assign ByteCntEq3       = ByteCnt == 16'd3; 
+assign ByteCntEq4       = ByteCnt == 16'd4; 
+assign ByteCntEq5       = ByteCnt == 16'd5; 
+assign ByteCntEq6       = ByteCnt == 16'd6;
+assign ByteCntEq7       = ByteCnt == 16'd7;
+assign ByteCntGreat2    = ByteCnt >  16'd2;
+assign ByteCntSmall7    = ByteCnt <  16'd7;
 assign ByteCntMax       = ByteCnt == 16'hffff;
 assign ByteCntMaxFrame  = ByteCnt == MaxFL[15:0] & ~HugEn;
 
@@ -186,7 +186,7 @@ begin
         IFGCounter[4:0] <=  5'h0;
       else
       if(IncrementIFGCounter)
-        IFGCounter[4:0] <=  IFGCounter[4:0] + 1'b1; 
+        IFGCounter[4:0] <=  IFGCounter[4:0] + 5'd1; 
     end
 end
 
@@ -208,7 +208,7 @@ begin
         DlyCrcCnt[3:0] <=  4'h1;
       else
       if(DlyCrcEn & (|DlyCrcCnt[3:0]))
-        DlyCrcCnt[3:0] <=  DlyCrcCnt[3:0] + 1'b1;
+        DlyCrcCnt[3:0] <=  DlyCrcCnt[3:0] + 4'd1;
     end
 end
 

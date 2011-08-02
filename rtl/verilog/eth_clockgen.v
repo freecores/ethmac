@@ -87,7 +87,7 @@ wire  [7:0] TempDivider;
 
 
 assign TempDivider[7:0]   = (Divider[7:0]<2)? 8'h02 : Divider[7:0]; // If smaller than 2
-assign CounterPreset[7:0] = (TempDivider[7:0]>>1) - 1'b1;           // We are counting half of period
+assign CounterPreset[7:0] = (TempDivider[7:0]>>1) - 8'b1;           // We are counting half of period
 
 
 // Counter counts half period

@@ -250,7 +250,7 @@ begin
     DlyCrcCnt <=  4'h0;
   else
   if(IncrementDlyCrcCnt)
-    DlyCrcCnt <=  DlyCrcCnt + 1'b1;
+    DlyCrcCnt <=  DlyCrcCnt + 4'd1;
 end
 
              
@@ -269,10 +269,10 @@ begin
     ByteCnt <=  6'h0;
   else
   if(IncrementByteCntBy2 & EnableCnt)
-    ByteCnt <=  (ByteCnt[5:0] ) + 2'h2;
+    ByteCnt <=  (ByteCnt[5:0] ) + 6'd2;
   else
   if(IncrementByteCnt & EnableCnt)
-    ByteCnt <=  (ByteCnt[5:0] ) + 1'b1;
+    ByteCnt <=  (ByteCnt[5:0] ) + 6'd1;
 end
 
 

@@ -104,9 +104,9 @@ begin
   else
   if(read ^ write)
     if(read)
-      cnt <= cnt - 1'b1;
+      cnt <= cnt - 1;
     else
-      cnt <= cnt + 1'b1;
+      cnt <= cnt + 1;
 end
 
 

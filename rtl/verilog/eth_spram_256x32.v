@@ -273,7 +273,10 @@ module eth_spram_256x32(
      if (ce)
        raddr <=  addr; // read address needs to be registered to read clock
 
-   assign  q = rst ? {32{1'b0}} : {mem3[raddr], mem2[raddr], mem1[raddr], mem0[raddr]};
+   assign  q = rst ? {32{1'b0}} : {mem3[raddr],
+                                   mem2[raddr],
+                                   mem1[raddr],
+                                   mem0[raddr]};
 
     // write operation
     always@(posedge clk)
@@ -295,7 +298,7 @@ module eth_spram_256x32(
       input [7:0] finish;
       integer     rnum;
       begin
-    	 for (rnum=start;rnum<=finish;rnum=rnum+1)
+    	 for (rnum={24'd0,start};rnum<={24'd0,finish};rnum=rnum+1)
            $display("Addr %h = %0h %0h %0h %0h",rnum,mem3[rnum],mem2[rnum],mem1[rnum],mem0[rnum]);
       end
    endtask

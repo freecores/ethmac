@@ -555,7 +555,7 @@ reg TxEn_needed;
 reg RxEn_needed;
 
 wire StartRxPointerRead;
-reg RxPointerRead; 
+reg RxPointerRead;
 
 // RX shift ending signals
 reg ShiftEnded_rck;
@@ -749,6 +749,7 @@ begin
   else
     begin
       // Switching between three stages depends on enable signals
+     /* verilator lint_off CASEINCOMPLETE */ // JB
       case ({WbEn_q, RxEn_q, TxEn_q, RxEn_needed, TxEn_needed})  // synopsys parallel_case
         5'b100_10, 5'b100_11 :
           begin
@@ -813,6 +814,7 @@ begin
             BDRead <= (|BDCs) & ~WB_WE_I;
           end
       endcase
+      /* verilator lint_on CASEINCOMPLETE */
     end
 end
 

@@ -116,12 +116,14 @@ begin
         begin 
           if(|ByteSelect)
             begin
+	       /* verilator lint_off CASEINCOMPLETE */
               case (ByteSelect[3:0])  // synopsys parallel_case full_case
                 4'h1 :    ShiftReg[7:0] <=  {2'b01, ~WriteOp, WriteOp, Fiad[4:1]};
                 4'h2 :    ShiftReg[7:0] <=  {Fiad[0], Rgad[4:0], 2'b10};
                 4'h4 :    ShiftReg[7:0] <=  CtrlData[15:8];
                 4'h8 :    ShiftReg[7:0] <=  CtrlData[7:0];
-              endcase
+              endcase // case (ByteSelect[3:0])
+	       /* verilator lint_on CASEINCOMPLETE */
             end 
           else
             begin

@@ -76,7 +76,7 @@
 
 module eth_spram_256x32(
 	// Generic synchronous single-port RAM interface
-	clk, rst, ce, we, oe, addr, di, do
+	clk, rst, ce, we, oe, addr, di, dato
 
 `ifdef ETH_BIST
   ,
@@ -100,7 +100,7 @@ module eth_spram_256x32(
    input           oe;   // Output enable input, active high
    input  [7:0]    addr; // address bus inputs
    input  [31:0]   di;   // input data bus
-   output [31:0]   do;   // output data bus
+   output [31:0]   dato;   // output data bus
 
 `ifdef ETH_BIST
    input           mbist_si_i;       // bist scan serial in
@@ -134,7 +134,7 @@ module eth_spram_256x32(
 
    RAMB4_S8 ram0
      (
-      .DO      (do[7:0]),
+      .DO      (dato[7:0]),
       .ADDR    ({1'b0, addr}),
       .DI      (di[7:0]),
       .EN      (ce),
@@ -145,7 +145,7 @@ module eth_spram_256x32(
 
    RAMB4_S8 ram1
      (
-      .DO      (do[15:8]),
+      .DO      (dato[15:8]),
       .ADDR    ({1'b0, addr}),
       .DI      (di[15:8]),
       .EN      (ce),
@@ -156,7 +156,7 @@ module eth_spram_256x32(
 
    RAMB4_S8 ram2
      (
-      .DO      (do[23:16]),
+      .DO      (dato[23:16]),
       .ADDR    ({1'b0, addr}),
       .DI      (di[23:16]),
       .EN      (ce),
@@ -167,7 +167,7 @@ module eth_spram_256x32(
 
    RAMB4_S8 ram3
      (
-      .DO      (do[31:24]),
+      .DO      (dato[31:24]),
       .ADDR    ({1'b0, addr}),
       .DI      (di[31:24]),
       .EN      (ce),
@@ -192,7 +192,7 @@ module eth_spram_256x32(
         .OEN        (!oe),
         .ADR        (addr),
         .DI         (di),
-        .DOUT       (do)
+        .DOUT       (dato)
 
   `ifdef ETH_BIST
         ,
@@ -220,7 +220,7 @@ module eth_spram_256x32(
         .OEN        (!oe),
         .A          (addr),
         .D          (di),
-        .Q          (do)
+        .Q          (dato)
 
    `ifdef ETH_BIST
         ,
@@ -240,7 +240,7 @@ module eth_spram_256x32(
       .wren           (ce & we),
       .clock          (clk),
       .data           (di),
-      .q              (do)
+      .q              (dato)
       );  //exemplar attribute altera_spram_256x32_inst NOOPT TRUE
 
    `else   // !ETH_ALTERA_ALTSYNCRAM
@@ -262,7 +262,7 @@ module eth_spram_256x32(
    //
    // Data output drivers
    //
-   assign do = (oe & ce) ? q : {32{1'bz}};
+   assign dato = (oe & ce) ? q : {32{1'bz}};
 
    //
    // RAM read and write

@@ -704,7 +704,7 @@ eth_spram_256x32
       .oe      (ram_oe),
       .addr    (ram_addr),
       .di      (ram_di),
-      .do      (ram_do)
+      .dato    (ram_do)
 `ifdef ETH_BIST
       ,
       .mbist_si_i       (mbist_si_i),

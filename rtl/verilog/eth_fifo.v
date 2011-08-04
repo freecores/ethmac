@@ -59,7 +59,8 @@
 `include "eth_defines.v"
 `include "timescale.v"
 
-module eth_fifo (data_in, data_out, clk, reset, write, read, clear, almost_full, full, almost_empty, empty, cnt);
+module eth_fifo (data_in, data_out, clk, reset, write, read, clear,
+                 almost_full, full, almost_empty, empty, cnt);
 
 parameter DATA_WIDTH    = 32;
 parameter DEPTH         = 8;
@@ -107,6 +108,7 @@ begin
     else
       cnt <= cnt + 1'b1;
 end
+
 
 always @ (posedge clk or posedge reset)
 begin

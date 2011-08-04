@@ -304,7 +304,8 @@ end
 
              
 assign ResetByteCnt = RxEndFrm;
-assign IncrementByteCnt = RxValid & DetectionWindow & ~ByteCntEq18 & (~DlyCrcEn | DlyCrcEn & DlyCrcCnt[2]);
+assign IncrementByteCnt = RxValid & DetectionWindow & ~ByteCntEq18 & 
+			  (~DlyCrcEn | DlyCrcEn & DlyCrcCnt[2]);
 
 
 // Byte counter

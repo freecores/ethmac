@@ -252,61 +252,63 @@
 
 
 module eth_wishbone
-   (
+  (
 
-    // WISHBONE common
-    WB_CLK_I, WB_DAT_I, WB_DAT_O, 
+   // WISHBONE common
+   WB_CLK_I, WB_DAT_I, WB_DAT_O, 
 
-    // WISHBONE slave
- 		WB_ADR_I, WB_WE_I, WB_ACK_O, 
-    BDCs, 
+   // WISHBONE slave
+   WB_ADR_I, WB_WE_I, WB_ACK_O, 
+   BDCs, 
 
-    Reset, 
+   Reset, 
 
-    // WISHBONE master
-    m_wb_adr_o, m_wb_sel_o, m_wb_we_o, 
-    m_wb_dat_o, m_wb_dat_i, m_wb_cyc_o, 
-    m_wb_stb_o, m_wb_ack_i, m_wb_err_i, 
+   // WISHBONE master
+   m_wb_adr_o, m_wb_sel_o, m_wb_we_o, 
+   m_wb_dat_o, m_wb_dat_i, m_wb_cyc_o, 
+   m_wb_stb_o, m_wb_ack_i, m_wb_err_i, 
 
 `ifdef ETH_WISHBONE_B3
-    m_wb_cti_o, m_wb_bte_o, 
+   m_wb_cti_o, m_wb_bte_o, 
 `endif
 
-    //TX
-    MTxClk, TxStartFrm, TxEndFrm, TxUsedData, TxData, 
-    TxRetry, TxAbort, TxUnderRun, TxDone, PerPacketCrcEn, 
-    PerPacketPad, 
+   //TX
+   MTxClk, TxStartFrm, TxEndFrm, TxUsedData, TxData, 
+   TxRetry, TxAbort, TxUnderRun, TxDone, PerPacketCrcEn, 
+   PerPacketPad, 
 
-    //RX
-    MRxClk, RxData, RxValid, RxStartFrm, RxEndFrm, RxAbort, RxStatusWriteLatched_sync2, 
-    
-    // Register
-    r_TxEn, r_RxEn, r_TxBDNum, r_RxFlow, r_PassAll, 
+   //RX
+   MRxClk, RxData, RxValid, RxStartFrm, RxEndFrm, RxAbort,
+   RxStatusWriteLatched_sync2, 
+  
+   // Register
+   r_TxEn, r_RxEn, r_TxBDNum, r_RxFlow, r_PassAll, 
 
-    // Interrupts
-    TxB_IRQ, TxE_IRQ, RxB_IRQ, RxE_IRQ, Busy_IRQ, 
-    
-    // Rx Status
-    InvalidSymbol, LatchedCrcError, RxLateCollision, ShortFrame, DribbleNibble,
-    ReceivedPacketTooBig, RxLength, LoadRxStatus, ReceivedPacketGood, AddressMiss, 
-    ReceivedPauseFrm, 
-    
-    // Tx Status
-    RetryCntLatched, RetryLimit, LateCollLatched, DeferLatched, RstDeferLatched, CarrierSenseLost
+   // Interrupts
+   TxB_IRQ, TxE_IRQ, RxB_IRQ, RxE_IRQ, Busy_IRQ, 
+  
+   // Rx Status
+   InvalidSymbol, LatchedCrcError, RxLateCollision, ShortFrame, DribbleNibble,
+   ReceivedPacketTooBig, RxLength, LoadRxStatus, ReceivedPacketGood,
+   AddressMiss, 
+   ReceivedPauseFrm, 
+  
+   // Tx Status
+   RetryCntLatched, RetryLimit, LateCollLatched, DeferLatched, RstDeferLatched,
+   CarrierSenseLost
 
-    // Bist
+   // Bist
 `ifdef ETH_BIST
-    ,
-    // debug chain signals
-    mbist_si_i,       // bist scan serial in
-    mbist_so_o,       // bist scan serial out
-    mbist_ctrl_i        // bist chain shift control
+   ,
+   // debug chain signals
+   mbist_si_i,       // bist scan serial in
+   mbist_so_o,       // bist scan serial out
+   mbist_ctrl_i        // bist chain shift control
 `endif
-    
 
 
-		);
 
+   );
 
 parameter TX_FIFO_DATA_WIDTH = `ETH_TX_FIFO_DATA_WIDTH;
 parameter TX_FIFO_DEPTH      = `ETH_TX_FIFO_DEPTH;
@@ -314,7 +316,6 @@ parameter TX_FIFO_CNT_WIDTH  = `ETH_TX_FIFO_CNT_WIDTH;
 parameter RX_FIFO_DATA_WIDTH = `ETH_RX_FIFO_DATA_WIDTH;
 parameter RX_FIFO_DEPTH      = `ETH_RX_FIFO_DEPTH;
 parameter RX_FIFO_CNT_WIDTH  = `ETH_RX_FIFO_CNT_WIDTH;
-
 
 // WISHBONE common
 input           WB_CLK_I;       // WISHBONE clock
@@ -350,24 +351,31 @@ input           Reset;       // Reset signal
 input           InvalidSymbol;    // Invalid symbol was received during reception in 100 Mbps mode
 input           LatchedCrcError;  // CRC error
 input           RxLateCollision;  // Late collision occured while receiving frame
-input           ShortFrame;       // Frame shorter then the minimum size (r_MinFL) was received while small packets are enabled (r_RecSmall)
+input           ShortFrame;       // Frame shorter then the minimum size
+                                  // (r_MinFL) was received while small
+                                  // packets are enabled (r_RecSmall)
 input           DribbleNibble;    // Extra nibble received
 input           ReceivedPacketTooBig;// Received packet is bigger than r_MaxFL
 input    [15:0] RxLength;         // Length of the incoming frame
 input           LoadRxStatus;     // Rx status was loaded
-input           ReceivedPacketGood;// Received packet's length and CRC are good
-input           AddressMiss;      // When a packet is received AddressMiss status is written to the Rx BD
+input           ReceivedPacketGood;  // Received packet's length and CRC are
+                                     // good
+input           AddressMiss;      // When a packet is received AddressMiss
+                                  // status is written to the Rx BD
 input           r_RxFlow;
 input           r_PassAll;
 input           ReceivedPauseFrm;
 
 // Tx Status signals
 input     [3:0] RetryCntLatched;  // Latched Retry Counter
-input           RetryLimit;       // Retry limit reached (Retry Max value + 1 attempts were made)
+input           RetryLimit;       // Retry limit reached (Retry Max value +1
+                                  // attempts were made)
 input           LateCollLatched;  // Late collision occured
-input           DeferLatched;     // Defer indication (Frame was defered before sucessfully sent)
+input           DeferLatched;     // Defer indication (Frame was defered
+                                  // before sucessfully sent)
 output          RstDeferLatched;
-input           CarrierSenseLost; // Carrier Sense was lost during the frame transmission
+input           CarrierSenseLost; // Carrier Sense was lost during the
+                                  // frame transmission
 
 // Tx
 input           MTxClk;         // Transmit clock (from PHY)
@@ -388,7 +396,8 @@ input   [7:0]   RxData;         // Received data byte (from PHY)
 input           RxValid;        // 
 input           RxStartFrm;     // 
 input           RxEndFrm;       // 
-input           RxAbort;        // This signal is set when address doesn't match.
+input           RxAbort;        // This signal is set when address doesn't
+                                // match.
 output          RxStatusWriteLatched_sync2;
 
 //Register
@@ -408,7 +417,7 @@ output Busy_IRQ;
 `ifdef ETH_BIST
 input   mbist_si_i;       // bist scan serial in
 output  mbist_so_o;       // bist scan serial out
-input [`ETH_MBIST_CTRL_WIDTH - 1:0] mbist_ctrl_i;       // bist chain shift control
+input [`ETH_MBIST_CTRL_WIDTH - 1:0] mbist_ctrl_i; // bist chain shift control
 `endif
 
 reg TxB_IRQ;
@@ -541,12 +550,135 @@ reg [31:0]  ram_di;
 wire [31:0] ram_do;
 
 wire StartTxPointerRead;
-reg  TxPointerRead;
+reg TxPointerRead;
 reg TxEn_needed;
 reg RxEn_needed;
 
 wire StartRxPointerRead;
 reg RxPointerRead; 
+
+// RX shift ending signals
+reg ShiftEnded_rck;
+reg ShiftEndedSync1;
+reg ShiftEndedSync2;
+reg ShiftEndedSync3;
+reg ShiftEndedSync_c1;
+reg ShiftEndedSync_c2;
+
+wire StartShiftWillEnd;
+
+reg StartOccured;
+reg TxStartFrm_sync1;
+reg TxStartFrm_sync2;
+reg TxStartFrm_syncb1;
+reg TxStartFrm_syncb2;
+
+wire TxFifoClear;
+wire TxBufferAlmostFull;
+wire TxBufferFull;
+wire TxBufferEmpty;
+wire TxBufferAlmostEmpty;
+wire SetReadTxDataFromMemory;
+reg BlockReadTxDataFromMemory;
+
+reg tx_burst_en;
+reg rx_burst_en;
+reg  [`ETH_BURST_CNT_WIDTH-1:0] tx_burst_cnt;
+
+wire ReadTxDataFromMemory_2;
+wire tx_burst;
+
+wire [31:0] TxData_wb;
+wire ReadTxDataFromFifo_wb;
+
+wire [TX_FIFO_CNT_WIDTH-1:0] txfifo_cnt;
+wire [RX_FIFO_CNT_WIDTH-1:0] rxfifo_cnt;
+
+reg  [`ETH_BURST_CNT_WIDTH-1:0] rx_burst_cnt;
+
+wire rx_burst;
+wire enough_data_in_rxfifo_for_burst;
+wire enough_data_in_rxfifo_for_burst_plus1;
+
+reg ReadTxDataFromMemory;
+wire WriteRxDataToMemory;
+
+reg MasterWbTX;
+reg MasterWbRX;
+
+reg [29:0] m_wb_adr_o;
+reg        m_wb_cyc_o;
+reg  [3:0] m_wb_sel_o;
+reg        m_wb_we_o;
+
+wire TxLengthEq0;
+wire TxLengthLt4;
+
+reg BlockingIncrementTxPointer;
+reg [31:2] TxPointerMSB;
+reg [1:0]  TxPointerLSB;
+reg [1:0]  TxPointerLSB_rst;
+reg [31:2] RxPointerMSB;
+reg [1:0]  RxPointerLSB_rst;
+
+wire RxBurstAcc;
+wire RxWordAcc;
+wire RxHalfAcc;
+wire RxByteAcc;
+
+wire ResetTxBDReady;
+reg BlockingTxStatusWrite_sync1;
+reg BlockingTxStatusWrite_sync2;
+reg BlockingTxStatusWrite_sync3;
+
+reg cyc_cleared;
+reg IncrTxPointer;
+
+reg  [3:0] RxByteSel;
+wire MasterAccessFinished;
+
+reg LatchValidBytes;
+reg LatchValidBytes_q;
+
+// Start: Generation of the ReadTxDataFromFifo_tck signal and synchronization to the WB_CLK_I
+reg ReadTxDataFromFifo_sync1;
+reg ReadTxDataFromFifo_sync2;
+reg ReadTxDataFromFifo_sync3;
+reg ReadTxDataFromFifo_syncb1;
+reg ReadTxDataFromFifo_syncb2;
+reg ReadTxDataFromFifo_syncb3;
+
+reg RxAbortSync1;
+reg RxAbortSync2;
+reg RxAbortSync3;
+reg RxAbortSync4;
+reg RxAbortSyncb1;
+reg RxAbortSyncb2;
+
+reg RxEnableWindow;
+
+wire SetWriteRxDataToFifo;
+
+reg WriteRxDataToFifoSync1;
+reg WriteRxDataToFifoSync2;
+reg WriteRxDataToFifoSync3;
+
+wire WriteRxDataToFifo_wb;
+
+reg LatchedRxStartFrm;
+reg SyncRxStartFrm;
+reg SyncRxStartFrm_q;
+reg SyncRxStartFrm_q2;
+wire RxFifoReset;
+
+wire TxError;
+wire RxError;
+
+reg RxStatusWriteLatched;
+reg RxStatusWriteLatched_sync1;
+reg RxStatusWriteLatched_sync2;
+reg RxStatusWriteLatched_syncb1;
+reg RxStatusWriteLatched_syncb2;
 
 `ifdef ETH_WISHBONE_B3
 assign m_wb_bte_o = 2'b00;    // Linear burst
@@ -562,19 +694,31 @@ end
 assign WB_DAT_O = ram_do;
 
 // Generic synchronous single-port RAM interface
-eth_spram_256x32 bd_ram (
-	.clk(WB_CLK_I), .rst(Reset), .ce(ram_ce), .we(ram_we), .oe(ram_oe), .addr(ram_addr), .di(ram_di), .do(ram_do)
+eth_spram_256x32
+     bd_ram
+     (
+      .clk     (WB_CLK_I),
+      .rst     (Reset),
+      .ce      (ram_ce),
+      .we      (ram_we),
+      .oe      (ram_oe),
+      .addr    (ram_addr),
+      .di      (ram_di),
+      .do      (ram_do)
 `ifdef ETH_BIST
-  ,
-  .mbist_si_i       (mbist_si_i),
-  .mbist_so_o       (mbist_so_o),
-  .mbist_ctrl_i       (mbist_ctrl_i)
+      ,
+      .mbist_si_i       (mbist_si_i),
+      .mbist_so_o       (mbist_so_o),
+      .mbist_ctrl_i       (mbist_ctrl_i)
 `endif
-);
+      );
 
 assign ram_ce = 1'b1;
-assign ram_we = (BDWrite & {4{(WbEn & WbEn_q)}}) | {4{(TxStatusWrite | RxStatusWrite)}};
-assign ram_oe = BDRead & WbEn & WbEn_q | TxEn & TxEn_q & (TxBDRead | TxPointerRead) | RxEn & RxEn_q & (RxBDRead | RxPointerRead);
+assign ram_we = (BDWrite & {4{(WbEn & WbEn_q)}}) |
+                {4{(TxStatusWrite | RxStatusWrite)}};
+assign ram_oe = BDRead & WbEn & WbEn_q | TxEn & TxEn_q &
+                (TxBDRead | TxPointerRead) | RxEn & RxEn_q &
+                (RxBDRead | RxPointerRead);
 
 
 always @ (posedge WB_CLK_I or posedge Reset)
@@ -618,7 +762,8 @@ begin
           begin
             WbEn <= 1'b0;
             RxEn <= 1'b0;
-            TxEn <= 1'b1;  // wb access stage, r_RxEn is disabled but r_TxEn is enabled
+            TxEn <= 1'b1;  // wb access stage, r_RxEn is disabled but
+                           // r_TxEn is enabled
             ram_addr <= {TxBDAddress, TxPointerRead};
             ram_di <= TxBDDataIn;
           end
@@ -642,7 +787,8 @@ begin
           end
         5'b001_00, 5'b001_01, 5'b001_10, 5'b001_11 :
           begin
-            WbEn <= 1'b1;  // TxEn access stage (we always go to wb access stage)
+            WbEn <= 1'b1;  // TxEn access stage (we always go to wb
+                           // access stage)
             RxEn <= 1'b0;
             TxEn <= 1'b0;
             ram_addr <= WB_ADR_I[9:2];
@@ -652,7 +798,9 @@ begin
           end
         5'b100_00 :
           begin
-            WbEn <= 1'b0;  // WbEn access stage and there is no need for other stages. WbEn needs to be switched off for a bit
+            WbEn <= 1'b0;  // WbEn access stage and there is no need
+                           // for other stages. WbEn needs to be
+                           // switched off for a bit
           end
         5'b000_00 :
           begin
@@ -703,7 +851,6 @@ begin
     Flop <= ~Flop;
 end
 
-wire ResetTxBDReady;
 assign ResetTxBDReady = TxDonePulse | TxAbortPulse | TxRetryPulse;
 
 // Latching READY status of the Tx buffer descriptor
@@ -713,15 +860,17 @@ begin
     TxBDReady <= 1'b0;
   else
   if(TxEn & TxEn_q & TxBDRead)
-    TxBDReady <= ram_do[15] & (ram_do[31:16] > 4); // TxBDReady is sampled only once at the beginning.
-  else                                                // Only packets larger then 4 bytes are transmitted.
+    // TxBDReady is sampled only once at the beginning.
+    TxBDReady <= ram_do[15] & (ram_do[31:16] > 4);
+  else
+  // Only packets larger then 4 bytes are transmitted.
   if(ResetTxBDReady)
     TxBDReady <= 1'b0;
 end
 
-
 // Reading the Tx buffer descriptor
-assign StartTxBDRead = (TxRetryPacket_NotCleared | TxStatusWrite) & ~BlockingTxBDRead & ~TxBDReady;
+assign StartTxBDRead = (TxRetryPacket_NotCleared | TxStatusWrite) &
+                       ~BlockingTxBDRead & ~TxBDReady;
 
 always @ (posedge WB_CLK_I or posedge Reset)
 begin
@@ -734,7 +883,6 @@ begin
   if(TxBDReady)
     TxBDRead <= 1'b0;
 end
-
 
 // Reading Tx BD pointer
 assign StartTxPointerRead = TxBDRead & TxBDReady;
@@ -754,8 +902,8 @@ end
 
 
 // Writing status back to the Tx buffer descriptor
-assign TxStatusWrite = (TxDonePacket_NotCleared | TxAbortPacket_NotCleared) & TxEn & TxEn_q & ~BlockingTxStatusWrite;
-
+assign TxStatusWrite = (TxDonePacket_NotCleared | TxAbortPacket_NotCleared) &
+                       TxEn & TxEn_q & ~BlockingTxStatusWrite;
 
 
 // Status writing must occur only once. Meanwhile it is blocked.
@@ -771,10 +919,6 @@ begin
     BlockingTxStatusWrite <= 1'b1;
 end
 
-
-reg BlockingTxStatusWrite_sync1;
-reg BlockingTxStatusWrite_sync2;
-reg BlockingTxStatusWrite_sync3;
 
 // Synchronizing BlockingTxStatusWrite to MTxClk
 always @ (posedge MTxClk or posedge Reset)
@@ -803,7 +947,8 @@ begin
     BlockingTxStatusWrite_sync3 <= BlockingTxStatusWrite_sync2;
 end
 
-assign RstDeferLatched = BlockingTxStatusWrite_sync2 & ~BlockingTxStatusWrite_sync3;
+assign RstDeferLatched = BlockingTxStatusWrite_sync2 &
+                         ~BlockingTxStatusWrite_sync3;
 
 // TxBDRead state is activated only once. 
 always @ (posedge WB_CLK_I or posedge Reset)
@@ -820,7 +965,8 @@ end
 
 
 // Latching status from the tx buffer descriptor
-// Data is avaliable one cycle after the access is started (at that time signal TxEn is not active)
+// Data is avaliable one cycle after the access is started (at that time
+// signal TxEn is not active)
 always @ (posedge WB_CLK_I or posedge Reset)
 begin
   if(Reset)
@@ -830,31 +976,7 @@ begin
     TxStatus <= ram_do[14:11];
 end
 
-reg ReadTxDataFromMemory;
-wire WriteRxDataToMemory;
 
-reg MasterWbTX;
-reg MasterWbRX;
-
-reg [29:0] m_wb_adr_o;
-reg        m_wb_cyc_o;
-reg  [3:0] m_wb_sel_o;
-reg        m_wb_we_o;
-
-wire TxLengthEq0;
-wire TxLengthLt4;
-
-reg BlockingIncrementTxPointer;
-reg [31:2] TxPointerMSB;
-reg [1:0]  TxPointerLSB;
-reg [1:0]  TxPointerLSB_rst;
-reg [31:2] RxPointerMSB;
-reg [1:0]  RxPointerLSB_rst;
-
-wire RxBurstAcc;
-wire RxWordAcc;
-wire RxHalfAcc;
-wire RxByteAcc;
 
 //Latching length from the buffer descriptor;
 always @ (posedge WB_CLK_I or posedge Reset)
@@ -869,22 +991,20 @@ begin
     begin
       if(TxLengthLt4)
         TxLength <= 16'h0;
-      else
-      if(TxPointerLSB_rst==2'h0)
-        TxLength <= TxLength - 3'h4;    // Length is subtracted at the data request
-      else
-      if(TxPointerLSB_rst==2'h1)
-        TxLength <= TxLength - 3'h3;    // Length is subtracted at the data request
-      else
-      if(TxPointerLSB_rst==2'h2)
-        TxLength <= TxLength - 3'h2;    // Length is subtracted at the data request
-      else
-      if(TxPointerLSB_rst==2'h3)
-        TxLength <= TxLength - 3'h1;    // Length is subtracted at the data request
+      else if(TxPointerLSB_rst==2'h0)
+        TxLength <= TxLength - 3'h4;    // Length is subtracted at
+                                        // the data request
+      else if(TxPointerLSB_rst==2'h1)
+        TxLength <= TxLength - 3'h3;     // Length is subtracted
+                                         // at the data request
+      else if(TxPointerLSB_rst==2'h2)
+        TxLength <= TxLength - 3'h2;     // Length is subtracted
+                                         // at the data request
+      else if(TxPointerLSB_rst==2'h3)
+        TxLength <= TxLength - 3'h1;     // Length is subtracted
+                                         // at the data request
     end
 end
-
-
 
 //Latching length from the buffer descriptor;
 always @ (posedge WB_CLK_I or posedge Reset)
@@ -899,12 +1019,9 @@ end
 assign TxLengthEq0 = TxLength == 0;
 assign TxLengthLt4 = TxLength < 4;
 
-reg cyc_cleared;
-reg IncrTxPointer;
 
-
-// Latching Tx buffer pointer from buffer descriptor. Only 30 MSB bits are latched
-// because TxPointerMSB is only used for word-aligned accesses.
+// Latching Tx buffer pointer from buffer descriptor. Only 30 MSB bits are
+// latched because TxPointerMSB is only used for word-aligned accesses.
 always @ (posedge WB_CLK_I or posedge Reset)
 begin
   if(Reset)
@@ -914,14 +1031,15 @@ begin
     TxPointerMSB <= ram_do[31:2];
   else
   if(IncrTxPointer & ~BlockingIncrementTxPointer)
-    TxPointerMSB <= TxPointerMSB + 1'b1;     // TxPointer is word-aligned
+      // TxPointer is word-aligned
+    TxPointerMSB <= TxPointerMSB + 1'b1;
 end
 
 
-// Latching 2 MSB bits of the buffer descriptor. Since word accesses are performed,
-// valid data does not necesserly start at byte 0 (could be byte 0, 1, 2 or 3). This
-// signals are used for proper selection of the start byte (TxData and TxByteCnt) are
-// set by this two bits.
+// Latching 2 MSB bits of the buffer descriptor. Since word accesses are
+// performed, valid data does not necesserly start at byte 0 (could be byte
+// 0, 1, 2 or 3). This signals are used for proper selection of the start
+// byte (TxData and TxByteCnt) are set by this two bits.
 always @ (posedge WB_CLK_I or posedge Reset)
 begin
   if(Reset)
@@ -933,9 +1051,9 @@ end
 
 
 // Latching 2 MSB bits of the buffer descriptor. 
-// After the read access, TxLength needs to be decremented for the number of the valid
-// bytes (1 to 4 bytes are valid in the first word). After the first read all bytes are 
-// valid so this two bits are reset to zero. 
+// After the read access, TxLength needs to be decremented for the number of
+// the valid bytes (1 to 4 bytes are valid in the first word). After the
+// first read all bytes are valid so this two bits are reset to zero. 
 always @ (posedge WB_CLK_I or posedge Reset)
 begin
   if(Reset)
@@ -944,13 +1062,10 @@ begin
   if(TxEn & TxEn_q & TxPointerRead)
     TxPointerLSB_rst[1:0] <= ram_do[1:0];
   else
-  if(MasterWbTX & m_wb_ack_i)                 // After first access pointer is word alligned
+// After first access pointer is word alligned
+  if(MasterWbTX & m_wb_ack_i)
     TxPointerLSB_rst[1:0] <= 0;
 end
-
-
-reg  [3:0] RxByteSel;
-wire MasterAccessFinished;
 
 
 always @ (posedge WB_CLK_I or posedge Reset)
@@ -966,14 +1081,6 @@ begin
 end
 
 
-wire TxBufferAlmostFull;
-wire TxBufferFull;
-wire TxBufferEmpty;
-wire TxBufferAlmostEmpty;
-wire SetReadTxDataFromMemory;
-
-reg BlockReadTxDataFromMemory;
-
 assign SetReadTxDataFromMemory = TxEn & TxEn_q & TxPointerRead;
 
 always @ (posedge WB_CLK_I or posedge Reset)
@@ -988,21 +1095,18 @@ begin
     ReadTxDataFromMemory <= 1'b1;
 end
 
-reg tx_burst_en;
-reg rx_burst_en;
+assign ReadTxDataFromMemory_2 = ReadTxDataFromMemory &
+                                ~BlockReadTxDataFromMemory;
 
-wire ReadTxDataFromMemory_2 = ReadTxDataFromMemory & ~BlockReadTxDataFromMemory;
-wire tx_burst = ReadTxDataFromMemory_2 & tx_burst_en;
-
-wire [31:0] TxData_wb;
-wire ReadTxDataFromFifo_wb;
+assign tx_burst = ReadTxDataFromMemory_2 & tx_burst_en;
 
 always @ (posedge WB_CLK_I or posedge Reset)
 begin
   if(Reset)
     BlockReadTxDataFromMemory <= 1'b0;
   else
-  if((TxBufferAlmostFull | TxLength <= 4)& MasterWbTX & (~cyc_cleared) & (!(TxAbortPacket_NotCleared | TxRetryPacket_NotCleared)))
+  if((TxBufferAlmostFull | TxLength <= 4) & MasterWbTX & (~cyc_cleared) &
+     (!(TxAbortPacket_NotCleared | TxRetryPacket_NotCleared)))
     BlockReadTxDataFromMemory <= 1'b1;
   else
   if(ReadTxDataFromFifo_wb | TxDonePacket | TxAbortPacket | TxRetryPacket)
@@ -1011,14 +1115,6 @@ end
 
 
 assign MasterAccessFinished = m_wb_ack_i | m_wb_err_i;
-wire [TX_FIFO_CNT_WIDTH-1:0] txfifo_cnt;
-wire [RX_FIFO_CNT_WIDTH-1:0] rxfifo_cnt;
-reg  [`ETH_BURST_CNT_WIDTH-1:0] tx_burst_cnt;
-reg  [`ETH_BURST_CNT_WIDTH-1:0] rx_burst_cnt;
-
-wire rx_burst;
-wire enough_data_in_rxfifo_for_burst;
-wire enough_data_in_rxfifo_for_burst_plus1;
 
 // Enabling master wishbone access to the memory for two devices TX and RX.
 always @ (posedge WB_CLK_I or posedge Reset)
@@ -1037,18 +1133,26 @@ begin
       IncrTxPointer<= 1'b0;
       tx_burst_en<= 1'b1;
       rx_burst_en<= 1'b0;
-      `ifdef ETH_WISHBONE_B3
-        m_wb_cti_o <= 3'b0;
-      `endif
+`ifdef ETH_WISHBONE_B3
+      m_wb_cti_o <= 3'b0;
+`endif
     end
   else
     begin
       // Switching between two stages depends on enable signals
-      casex ({MasterWbTX, MasterWbRX, ReadTxDataFromMemory_2, WriteRxDataToMemory, MasterAccessFinished, cyc_cleared, tx_burst, rx_burst})  // synopsys parallel_case
-        8'b00_10_00_10,             // Idle and MRB needed
-        8'b10_1x_10_1x,             // MRB continues
-        8'b10_10_01_10,             // Clear (previously MR) and MRB needed
-        8'b01_1x_01_1x :            // Clear (previously MW) and MRB needed
+      casex ({MasterWbTX,
+             MasterWbRX,
+             ReadTxDataFromMemory_2,
+             WriteRxDataToMemory,
+             MasterAccessFinished,
+             cyc_cleared,
+             tx_burst,
+             rx_burst})  // synopsys parallel_case
+
+        8'b00_10_00_10, // Idle and MRB needed
+        8'b10_1x_10_1x, // MRB continues
+        8'b10_10_01_10, // Clear (previously MR) and MRB needed
+        8'b01_1x_01_1x :// Clear (previously MW) and MRB needed
           begin
             MasterWbTX <= 1'b1;  // tx burst
             MasterWbRX <= 1'b0;
@@ -1061,20 +1165,19 @@ begin
             if(tx_burst_cnt==0)
               m_wb_adr_o <= TxPointerMSB;
             else
-              m_wb_adr_o <= m_wb_adr_o+1'b1;
-
+              m_wb_adr_o <= m_wb_adr_o + 1'b1;
             if(tx_burst_cnt==(`ETH_BURST_LENGTH-1))
               begin
                 tx_burst_en<= 1'b0;
-              `ifdef ETH_WISHBONE_B3
+`ifdef ETH_WISHBONE_B3
                 m_wb_cti_o <= 3'b111;
-              `endif
+`endif
               end
             else
               begin
-              `ifdef ETH_WISHBONE_B3
+`ifdef ETH_WISHBONE_B3
                 m_wb_cti_o <= 3'b010;
-              `endif
+`endif
               end
           end
         8'b00_x1_00_x1,             // Idle and MWB needed
@@ -1099,18 +1202,18 @@ begin
             if(rx_burst_cnt==(`ETH_BURST_LENGTH-1))
               begin
                 rx_burst_en<= 1'b0;
-              `ifdef ETH_WISHBONE_B3
+ `ifdef ETH_WISHBONE_B3
                 m_wb_cti_o <= 3'b111;
-              `endif
+ `endif
               end
             else
               begin
-              `ifdef ETH_WISHBONE_B3
+ `ifdef ETH_WISHBONE_B3
                 m_wb_cti_o <= 3'b010;
-              `endif
+ `endif
               end
           end
-        8'b00_x1_00_x0 :            // idle and MW is needed (data write to rx buffer)
+        8'b00_x1_00_x0 :// idle and MW is needed (data write to rx buffer)
           begin
             MasterWbTX <= 1'b0;
             MasterWbRX <= 1'b1;
@@ -1120,7 +1223,7 @@ begin
             m_wb_sel_o <= RxByteSel;
             IncrTxPointer<= 1'b0;
           end
-        8'b00_10_00_00 :            // idle and MR is needed (data read from tx buffer)
+        8'b00_10_00_00 : // idle and MR is needed (data read from tx buffer)
           begin
             MasterWbTX <= 1'b1;
             MasterWbRX <= 1'b0;
@@ -1130,8 +1233,8 @@ begin
             m_wb_sel_o <= 4'hf;
             IncrTxPointer<= 1'b1;
           end
-        8'b10_10_01_00,             // MR and MR is needed (data read from tx buffer)
-        8'b01_1x_01_0x  :           // MW and MR is needed (data read from tx buffer)
+        8'b10_10_01_00,// MR and MR is needed (data read from tx buffer)
+        8'b01_1x_01_0x  :// MW and MR is needed (data read from tx buffer)
           begin
             MasterWbTX <= 1'b1;
             MasterWbRX <= 1'b0;
@@ -1142,8 +1245,8 @@ begin
             cyc_cleared<= 1'b0;
             IncrTxPointer<= 1'b1;
           end
-        8'b01_01_01_00,             // MW and MW needed (data write to rx buffer)
-        8'b10_x1_01_x0  :           // MR and MW is needed (data write to rx buffer)
+        8'b01_01_01_00,// MW and MW needed (data write to rx buffer)
+        8'b10_x1_01_x0  :// MR and MW is needed (data write to rx buffer)
           begin
             MasterWbTX <= 1'b0;
             MasterWbRX <= 1'b1;
@@ -1154,24 +1257,31 @@ begin
             cyc_cleared<= 1'b0;
             IncrTxPointer<= 1'b0;
           end
-        8'b01_01_10_00,             // MW and MW needed (cycle is cleared between previous and next access)
-        8'b01_1x_10_x0,             // MW and MW or MR or MRB needed (cycle is cleared between previous and next access)
-        8'b10_10_10_00,             // MR and MR needed (cycle is cleared between previous and next access)
-        8'b10_x1_10_0x :            // MR and MR or MW or MWB (cycle is cleared between previous and next access)
+        8'b01_01_10_00,// MW and MW needed (cycle is cleared between
+                      // previous and next access)
+        8'b01_1x_10_x0,// MW and MW or MR or MRB needed (cycle is
+                    // cleared between previous and next access)
+        8'b10_10_10_00,// MR and MR needed (cycle is cleared between
+                       // previous and next access)
+        8'b10_x1_10_0x :// MR and MR or MW or MWB (cycle is cleared
+                       // between previous and next access)
           begin
-            m_wb_cyc_o <= 1'b0;  // whatever and master read or write is needed. We need to clear m_wb_cyc_o before next access is started
+            m_wb_cyc_o <= 1'b0;// whatever and master read or write is
+                               // needed. We need to clear m_wb_cyc_o
+                               // before next access is started
             cyc_cleared<= 1'b1;
             IncrTxPointer<= 1'b0;
             tx_burst_cnt<= 0;
             tx_burst_en<= txfifo_cnt<(TX_FIFO_DEPTH-`ETH_BURST_LENGTH) & (TxLength>(`ETH_BURST_LENGTH*4+4));
             rx_burst_cnt<= 0;
             rx_burst_en<= MasterWbRX ? enough_data_in_rxfifo_for_burst_plus1 : enough_data_in_rxfifo_for_burst;  // Counter is not decremented, yet, so plus1 is used.
-            `ifdef ETH_WISHBONE_B3
+`ifdef ETH_WISHBONE_B3
               m_wb_cti_o <= 3'b0;
-            `endif
+`endif
           end
-        8'bxx_00_10_00,             // whatever and no master read or write is needed (ack or err comes finishing previous access)
-        8'bxx_00_01_00 :            // Between cyc_cleared request was cleared
+        8'bxx_00_10_00,// whatever and no master read or write is needed
+                       // (ack or err comes finishing previous access)
+        8'bxx_00_01_00 : // Between cyc_cleared request was cleared
           begin
             MasterWbTX <= 1'b0;
             MasterWbRX <= 1'b0;
@@ -1179,12 +1289,15 @@ begin
             cyc_cleared<= 1'b0;
             IncrTxPointer<= 1'b0;
             rx_burst_cnt<= 0;
-            rx_burst_en<= MasterWbRX ? enough_data_in_rxfifo_for_burst_plus1 : enough_data_in_rxfifo_for_burst;  // Counter is not decremented, yet, so plus1 is used.
-            `ifdef ETH_WISHBONE_B3
-              m_wb_cti_o <= 3'b0;
-            `endif
+            // Counter is not decremented, yet, so plus1 is used.
+            rx_burst_en<= MasterWbRX ? enough_data_in_rxfifo_for_burst_plus1 :
+                                       enough_data_in_rxfifo_for_burst;
+`ifdef ETH_WISHBONE_B3
+            m_wb_cti_o <= 3'b0;
+`endif
           end
-        8'b00_00_00_00:             // whatever and no master read or write is needed (ack or err comes finishing previous access)
+        8'b00_00_00_00:  // whatever and no master read or write is needed
+                         // (ack or err comes finishing previous access)
           begin
             tx_burst_cnt<= 0;
             tx_burst_en<= txfifo_cnt<(TX_FIFO_DEPTH-`ETH_BURST_LENGTH) & (TxLength>(`ETH_BURST_LENGTH*4+4));
@@ -1201,32 +1314,30 @@ begin
     end
 end
 
-
-wire TxFifoClear;
-
 assign TxFifoClear = (TxAbortPacket | TxRetryPacket);
 
-eth_fifo #(.DATA_WIDTH(TX_FIFO_DATA_WIDTH),
-	   .DEPTH(TX_FIFO_DEPTH),
-	   .CNT_WIDTH(TX_FIFO_CNT_WIDTH))
-tx_fifo ( .data_in(m_wb_dat_i),                             .data_out(TxData_wb), 
-          .clk(WB_CLK_I),                                   .reset(Reset), 
-          .write(MasterWbTX & m_wb_ack_i),                  .read(ReadTxDataFromFifo_wb & ~TxBufferEmpty),
-          .clear(TxFifoClear),                              .full(TxBufferFull), 
-          .almost_full(TxBufferAlmostFull),                 .almost_empty(TxBufferAlmostEmpty), 
-          .empty(TxBufferEmpty),                            .cnt(txfifo_cnt)
-        );
+eth_fifo
+     #(
+       .DATA_WIDTH(TX_FIFO_DATA_WIDTH),
+       .DEPTH(TX_FIFO_DEPTH),
+       .CNT_WIDTH(TX_FIFO_CNT_WIDTH))
+tx_fifo (
+       .data_in(m_wb_dat_i),
+       .data_out(TxData_wb),
+       .clk(WB_CLK_I),
+       .reset(Reset),
+       .write(MasterWbTX & m_wb_ack_i),
+       .read(ReadTxDataFromFifo_wb & ~TxBufferEmpty),
+       .clear(TxFifoClear),
+       .full(TxBufferFull), 
+       .almost_full(TxBufferAlmostFull),
+       .almost_empty(TxBufferAlmostEmpty),
+       .empty(TxBufferEmpty),
+       .cnt(txfifo_cnt)
+       );
 
-
-reg StartOccured;
-reg TxStartFrm_sync1;
-reg TxStartFrm_sync2;
-reg TxStartFrm_syncb1;
-reg TxStartFrm_syncb2;
-
-
-
-// Start: Generation of the TxStartFrm_wb which is then synchronized to the MTxClk
+// Start: Generation of the TxStartFrm_wb which is then synchronized to the
+// MTxClk
 always @ (posedge WB_CLK_I or posedge Reset)
 begin
   if(Reset)
@@ -1239,7 +1350,8 @@ begin
     TxStartFrm_wb <= 1'b0;
 end
 
-// StartOccured: TxStartFrm_wb occurs only ones at the beginning. Then it's blocked.
+// StartOccured: TxStartFrm_wb occurs only ones at the beginning. Then it's
+// blocked.
 always @ (posedge WB_CLK_I or posedge Reset)
 begin
   if(Reset)
@@ -1293,10 +1405,12 @@ begin
   if(TxStartFrm_sync2)
     TxStartFrm <= 1'b1;
   else
-  if(TxUsedData_q | ~TxStartFrm_sync2 & (TxRetry & (~TxRetry_q) | TxAbort & (~TxAbort_q)))
+  if(TxUsedData_q | ~TxStartFrm_sync2 &
+     (TxRetry & (~TxRetry_q) | TxAbort & (~TxAbort_q)))
     TxStartFrm <= 1'b0;
 end
-// End: Generation of the TxStartFrm_wb which is then synchronized to the MTxClk
+// End: Generation of the TxStartFrm_wb which is then synchronized to the
+// MTxClk
 
 
 // TxEndFrm_wb: indicator of the end of frame
@@ -1312,12 +1426,9 @@ begin
     TxEndFrm_wb <= 1'b0;
 end
 
-
 // Marks which bytes are valid within the word.
 assign TxValidBytes = TxLengthLt4 ? TxLength[1:0] : 2'b0;
 
-reg LatchValidBytes;
-reg LatchValidBytes_q;
 
 always @ (posedge WB_CLK_I or posedge Reset)
 begin
@@ -1363,11 +1474,15 @@ assign RxIRQEn         = RxStatus[14];
 assign WrapRxStatusBit = RxStatus[13];
 
 
-// Temporary Tx and Rx buffer descriptor address 
-assign TempTxBDAddress[7:1] = {7{ TxStatusWrite     & ~WrapTxStatusBit}}   & (TxBDAddress + 1'b1) ; // Tx BD increment or wrap (last BD)
-assign TempRxBDAddress[7:1] = {7{ WrapRxStatusBit}} & (r_TxBDNum[6:0])     | // Using first Rx BD
-                              {7{~WrapRxStatusBit}} & (RxBDAddress + 1'b1) ; // Using next Rx BD (incremenrement address)
+// Temporary Tx and Rx buffer descriptor address
+assign TempTxBDAddress[7:1] = {7{ TxStatusWrite  & ~WrapTxStatusBit}} &
+                              (TxBDAddress + 1'b1); // Tx BD increment or wrap
+                                                    // (last BD)
 
+assign TempRxBDAddress[7:1] = 
+  {7{ WrapRxStatusBit}} & (r_TxBDNum[6:0]) | // Using first Rx BD
+  {7{~WrapRxStatusBit}} & (RxBDAddress + 1'b1); // Using next Rx BD
+                                                // (increment address)
 
 // Latching Tx buffer descriptor address
 always @ (posedge WB_CLK_I or posedge Reset)
@@ -1380,7 +1495,6 @@ begin
     TxBDAddress <= TempTxBDAddress;
 end
 
-
 // Latching Rx buffer descriptor address
 always @ (posedge WB_CLK_I or posedge Reset)
 begin
@@ -1392,7 +1506,9 @@ begin
     RxBDAddress <= TempRxBDAddress;
 end
 
-wire [8:0] TxStatusInLatched = {TxUnderRun, RetryCntLatched[3:0], RetryLimit, LateCollLatched, DeferLatched, CarrierSenseLost};
+wire [8:0] TxStatusInLatched = {TxUnderRun, RetryCntLatched[3:0],
+                                RetryLimit, LateCollLatched, DeferLatched,
+                                CarrierSenseLost};
 
 assign RxBDDataIn = {LatchedRxLength, 1'b0, RxStatus, 4'h0, RxStatusInLatched};
 assign TxBDDataIn = {LatchedTxLength, 1'b0, TxStatus, 2'h0, TxStatusInLatched};
@@ -1402,7 +1518,6 @@ assign TxBDDataIn = {LatchedTxLength, 1'b0, TxStatus, 2'h0, TxStatusInLatched};
 assign TxRetryPulse   = TxRetry_wb   & ~TxRetry_wb_q;
 assign TxDonePulse    = TxDone_wb    & ~TxDone_wb_q;
 assign TxAbortPulse   = TxAbort_wb   & ~TxAbort_wb_q;
-
 
 
 // Generating delayed signals
@@ -1446,8 +1561,9 @@ begin
   if(Reset)
     TxAbortPacket <= 1'b0;
   else
-  if(TxAbort_wb & (~tx_burst_en) & MasterWbTX & MasterAccessFinished & (~TxAbortPacketBlocked) |
-     TxAbort_wb & (~MasterWbTX) & (~TxAbortPacketBlocked))
+  if(TxAbort_wb & (~tx_burst_en) & MasterWbTX & MasterAccessFinished &
+    (~TxAbortPacketBlocked) | TxAbort_wb & (~MasterWbTX) &
+    (~TxAbortPacketBlocked))
     TxAbortPacket <= 1'b1;
   else
     TxAbortPacket <= 1'b0;
@@ -1462,8 +1578,9 @@ begin
   if(TxEn & TxEn_q & TxAbortPacket_NotCleared)
     TxAbortPacket_NotCleared <= 1'b0;
   else
-  if(TxAbort_wb & (~tx_burst_en) & MasterWbTX & MasterAccessFinished & (~TxAbortPacketBlocked) |
-     TxAbort_wb & (~MasterWbTX) & (~TxAbortPacketBlocked))
+  if(TxAbort_wb & (~tx_burst_en) & MasterWbTX & MasterAccessFinished &
+     (~TxAbortPacketBlocked) | TxAbort_wb & (~MasterWbTX) &
+     (~TxAbortPacketBlocked))
     TxAbortPacket_NotCleared <= 1'b1;
 end
 
@@ -1487,8 +1604,8 @@ begin
   if(Reset)
     TxRetryPacket <= 1'b0;
   else
-  if(TxRetry_wb & !tx_burst_en & MasterWbTX & MasterAccessFinished & !TxRetryPacketBlocked | 
-     TxRetry_wb & !MasterWbTX & !TxRetryPacketBlocked)
+  if(TxRetry_wb & !tx_burst_en & MasterWbTX & MasterAccessFinished &
+     !TxRetryPacketBlocked | TxRetry_wb & !MasterWbTX & !TxRetryPacketBlocked)
     TxRetryPacket <= 1'b1;
   else
     TxRetryPacket <= 1'b0;
@@ -1503,8 +1620,8 @@ begin
   if(StartTxBDRead)
     TxRetryPacket_NotCleared <= 1'b0;
   else
-  if(TxRetry_wb & !tx_burst_en & MasterWbTX & MasterAccessFinished & !TxRetryPacketBlocked | 
-     TxRetry_wb & !MasterWbTX & !TxRetryPacketBlocked)
+  if(TxRetry_wb & !tx_burst_en & MasterWbTX & MasterAccessFinished &
+     !TxRetryPacketBlocked | TxRetry_wb & !MasterWbTX & !TxRetryPacketBlocked)
     TxRetryPacket_NotCleared <= 1'b1;
 end
 
@@ -1528,8 +1645,8 @@ begin
   if(Reset)
     TxDonePacket <= 1'b0;
   else
-  if(TxDone_wb & !tx_burst_en & MasterWbTX & MasterAccessFinished & !TxDonePacketBlocked | 
-     TxDone_wb & !MasterWbTX & !TxDonePacketBlocked)
+  if(TxDone_wb & !tx_burst_en & MasterWbTX & MasterAccessFinished &
+     !TxDonePacketBlocked | TxDone_wb & !MasterWbTX & !TxDonePacketBlocked)
     TxDonePacket <= 1'b1;
   else
     TxDonePacket <= 1'b0;
@@ -1544,8 +1661,8 @@ begin
   if(TxEn & TxEn_q & TxDonePacket_NotCleared)
     TxDonePacket_NotCleared <= 1'b0;
   else
-  if(TxDone_wb & !tx_burst_en & MasterWbTX & MasterAccessFinished & (~TxDonePacketBlocked) | 
-     TxDone_wb & !MasterWbTX & (~TxDonePacketBlocked))
+  if(TxDone_wb & !tx_burst_en & MasterWbTX & MasterAccessFinished &
+     (~TxDonePacketBlocked) | TxDone_wb & !MasterWbTX & (~TxDonePacketBlocked))
     TxDonePacket_NotCleared <= 1'b1;
 end
 
@@ -1607,19 +1724,19 @@ begin
   else
   if(TxStartFrm_sync2 & ~TxStartFrm)
     case(TxPointerLSB)  // synopsys parallel_case
-      2'h0 : TxData <= TxData_wb[31:24];                  // Big Endian Byte Ordering
-      2'h1 : TxData <= TxData_wb[23:16];                  // Big Endian Byte Ordering
-      2'h2 : TxData <= TxData_wb[15:08];                  // Big Endian Byte Ordering
-      2'h3 : TxData <= TxData_wb[07:00];                  // Big Endian Byte Ordering
+      2'h0 : TxData <= TxData_wb[31:24];// Big Endian Byte Ordering
+      2'h1 : TxData <= TxData_wb[23:16];// Big Endian Byte Ordering
+      2'h2 : TxData <= TxData_wb[15:08];// Big Endian Byte Ordering
+      2'h3 : TxData <= TxData_wb[07:00];// Big Endian Byte Ordering
     endcase
   else
   if(TxStartFrm & TxUsedData & TxPointerLSB==2'h3)
-    TxData <= TxData_wb[31:24];                           // Big Endian Byte Ordering
+    TxData <= TxData_wb[31:24];// Big Endian Byte Ordering
   else
   if(TxUsedData & Flop)
     begin
       case(TxByteCnt)  // synopsys parallel_case
-        0 : TxData <= TxDataLatched[31:24];               // Big Endian Byte Ordering
+        0 : TxData <= TxDataLatched[31:24];// Big Endian Byte Ordering
         1 : TxData <= TxDataLatched[23:16];
         2 : TxData <= TxDataLatched[15:8];
         3 : TxData <= TxDataLatched[7:0];
@@ -1634,7 +1751,8 @@ begin
   if(Reset)
     TxDataLatched[31:0] <= 32'h0;
   else
- if(TxStartFrm_sync2 & ~TxStartFrm | TxUsedData & Flop & TxByteCnt == 2'h3 | TxStartFrm & TxUsedData & Flop & TxByteCnt == 2'h0)
+  if(TxStartFrm_sync2 & ~TxStartFrm | TxUsedData & Flop & TxByteCnt == 2'h3 |
+     TxStartFrm & TxUsedData & Flop & TxByteCnt == 2'h0)
     TxDataLatched[31:0] <= TxData_wb[31:0];
 end
 
@@ -1704,21 +1822,13 @@ begin
 end
 
 
-// Start: Generation of the ReadTxDataFromFifo_tck signal and synchronization to the WB_CLK_I
-reg ReadTxDataFromFifo_sync1;
-reg ReadTxDataFromFifo_sync2;
-reg ReadTxDataFromFifo_sync3;
-reg ReadTxDataFromFifo_syncb1;
-reg ReadTxDataFromFifo_syncb2;
-reg ReadTxDataFromFifo_syncb3;
-
-
 always @ (posedge MTxClk or posedge Reset)
 begin
   if(Reset)
     ReadTxDataFromFifo_tck <= 1'b0;
   else
-  if(TxStartFrm_sync2 & ~TxStartFrm | TxUsedData & Flop & TxByteCnt == 2'h3 & ~LastWord | TxStartFrm & TxUsedData & Flop & TxByteCnt == 2'h0)
+  if(TxStartFrm_sync2 & ~TxStartFrm | TxUsedData & Flop & TxByteCnt == 2'h3 &
+     ~LastWord | TxStartFrm & TxUsedData & Flop & TxByteCnt == 2'h0)
      ReadTxDataFromFifo_tck <= 1'b1;
   else
   if(ReadTxDataFromFifo_syncb2 & ~ReadTxDataFromFifo_syncb3)
@@ -1774,8 +1884,10 @@ begin
     ReadTxDataFromFifo_sync3 <= ReadTxDataFromFifo_sync2;
 end
 
-assign ReadTxDataFromFifo_wb = ReadTxDataFromFifo_sync2 & ~ReadTxDataFromFifo_sync3;
-// End: Generation of the ReadTxDataFromFifo_tck signal and synchronization to the WB_CLK_I
+assign ReadTxDataFromFifo_wb = ReadTxDataFromFifo_sync2 &
+                               ~ReadTxDataFromFifo_sync3;
+// End: Generation of the ReadTxDataFromFifo_tck signal and synchronization
+// to the WB_CLK_I
 
 
 // Synchronizing TxRetry signal (synchronized to WISHBONE clock)
@@ -1831,14 +1943,8 @@ begin
 end
 
 
-reg RxAbortSync1;
-reg RxAbortSync2;
-reg RxAbortSync3;
-reg RxAbortSync4;
-reg RxAbortSyncb1;
-reg RxAbortSyncb2;
-
-assign StartRxBDRead = RxStatusWrite | RxAbortSync3 & ~RxAbortSync4 | r_RxEn & ~r_RxEn_q;
+assign StartRxBDRead = RxStatusWrite | RxAbortSync3 & ~RxAbortSync4 |
+                       r_RxEn & ~r_RxEn_q;
 
 // Reading the Rx buffer descriptor
 always @ (posedge WB_CLK_I or posedge Reset)
@@ -1854,8 +1960,8 @@ begin
 end
 
 
-// Reading of the next receive buffer descriptor starts after reception status is
-// written to the previous one.
+// Reading of the next receive buffer descriptor starts after reception status
+// is written to the previous one.
 
 // Latching READY status of the Rx buffer descriptor
 always @ (posedge WB_CLK_I or posedge Reset)
@@ -1867,11 +1973,12 @@ begin
     RxBDReady <= 1'b0;
   else
   if(RxEn & RxEn_q & RxBDRead)
-    RxBDReady <= ram_do[15]; // RxBDReady is sampled only once at the beginning
+    RxBDReady <= ram_do[15];// RxBDReady is sampled only once at the beginning
 end
 
 // Latching Rx buffer descriptor status
-// Data is avaliable one cycle after the access is started (at that time signal RxEn is not active)
+// Data is avaliable one cycle after the access is started (at that time
+// signal RxEn is not active)
 always @ (posedge WB_CLK_I or posedge Reset)
 begin
   if(Reset)
@@ -1887,18 +1994,14 @@ always @ (posedge WB_CLK_I or posedge Reset)
 begin
   if(Reset)
     RxReady <= 1'b0;
-  else
-  if(ShiftEnded | RxAbortSync2 & ~RxAbortSync3 | ~r_RxEn & r_RxEn_q)
+  else if(ShiftEnded | RxAbortSync2 & ~RxAbortSync3 | ~r_RxEn & r_RxEn_q)
     RxReady <= 1'b0;
-  else
-  if(RxEn & RxEn_q & RxPointerRead)
+  else if(RxEn & RxEn_q & RxPointerRead)
     RxReady <= 1'b1;
 end
 
 
 // Reading Rx BD pointer
-
-
 assign StartRxPointerRead = RxBDRead & RxBDReady;
 
 // Reading Tx BD Pointer
@@ -1925,17 +2028,20 @@ begin
     RxPointerMSB <= ram_do[31:2];
   else
   if(MasterWbRX & m_wb_ack_i)
-      RxPointerMSB <= RxPointerMSB + 1'b1; // Word access  (always word access. m_wb_sel_o are used for selecting bytes)
+      RxPointerMSB <= RxPointerMSB + 1'b1; // Word access (always word access.
+                                           // m_wb_sel_o are used for
+                                           // selecting bytes)
 end
 
 
-//Latching last addresses from buffer descriptor (used as byte-half-word indicator);
+//Latching last addresses from buffer descriptor (used as byte-half-word
+//indicator);
 always @ (posedge WB_CLK_I or posedge Reset)
 begin
   if(Reset)
     RxPointerLSB_rst[1:0] <= 0;
   else
-  if(MasterWbRX & m_wb_ack_i)                 // After first write all RxByteSel are active
+  if(MasterWbRX & m_wb_ack_i) // After first write all RxByteSel are active
     RxPointerLSB_rst[1:0] <= 0;
   else
   if(RxEn & RxEn_q & RxPointerRead)
@@ -1958,19 +2064,17 @@ always @ (posedge WB_CLK_I or posedge Reset)
 begin
   if(Reset)
     RxEn_needed <= 1'b0;
-  else
-  if(~RxReady & r_RxEn & WbEn & ~WbEn_q)
+  else if(~RxReady & r_RxEn & WbEn & ~WbEn_q)
     RxEn_needed <= 1'b1;
-  else
-  if(RxPointerRead & RxEn & RxEn_q)
+  else if(RxPointerRead & RxEn & RxEn_q)
     RxEn_needed <= 1'b0;
 end
 
 
-// Reception status is written back to the buffer descriptor after the end of frame is detected.
+// Reception status is written back to the buffer descriptor after the end
+// of frame is detected.
 assign RxStatusWrite = ShiftEnded & RxEn & RxEn_q;
 
-reg RxEnableWindow;
 
 // Indicating that last byte is being reveived
 always @ (posedge MRxClk or posedge Reset)
@@ -1985,15 +2089,8 @@ begin
     LastByteIn <= 1'b1;
 end
 
-reg ShiftEnded_rck;
-reg ShiftEndedSync1;
-reg ShiftEndedSync2;
-reg ShiftEndedSync3;
-reg ShiftEndedSync_c1;
-reg ShiftEndedSync_c2;
-
-wire StartShiftWillEnd;
-assign StartShiftWillEnd = LastByteIn  | RxValid & RxEndFrm & (&RxByteCnt) & RxEnableWindow;
+assign StartShiftWillEnd = LastByteIn  | RxValid & RxEndFrm & (&RxByteCnt) &
+                           RxEnableWindow;
 
 // Indicating that data reception will end
 always @ (posedge MRxClk or posedge Reset)
@@ -2007,7 +2104,6 @@ begin
   if(StartShiftWillEnd)
     ShiftWillEnd <= 1'b1;
 end
-
 
 
 // Receive byte counter
@@ -2060,7 +2156,8 @@ begin
     if(RxStartFrm)
     begin
       case(RxPointerLSB_rst)     // synopsys parallel_case
-        2'h0:        RxDataLatched1[31:24] <= RxData;            // Big Endian Byte Ordering
+        // Big Endian Byte Ordering
+        2'h0:        RxDataLatched1[31:24] <= RxData;
         2'h1:        RxDataLatched1[23:16] <= RxData;
         2'h2:        RxDataLatched1[15:8]  <= RxData;
         2'h3:        RxDataLatched1        <= RxDataLatched1;
@@ -2069,15 +2166,14 @@ begin
     else if (RxEnableWindow)
     begin
       case(RxByteCnt)     // synopsys parallel_case
-        2'h0:        RxDataLatched1[31:24] <= RxData;            // Big Endian Byte Ordering
+        // Big Endian Byte Ordering
+        2'h0:        RxDataLatched1[31:24] <= RxData;
         2'h1:        RxDataLatched1[23:16] <= RxData;
         2'h2:        RxDataLatched1[15:8]  <= RxData;
         2'h3:        RxDataLatched1        <= RxDataLatched1;
       endcase
     end
 end
-
-wire SetWriteRxDataToFifo;
 
 // Assembling data that will be written to the rx_fifo
 always @ (posedge MRxClk or posedge Reset)
@@ -2086,11 +2182,13 @@ begin
     RxDataLatched2 <= 32'h0;
   else
   if(SetWriteRxDataToFifo & ~ShiftWillEnd)
-    RxDataLatched2 <= {RxDataLatched1[31:8], RxData};              // Big Endian Byte Ordering
+    // Big Endian Byte Ordering
+    RxDataLatched2 <= {RxDataLatched1[31:8], RxData};
   else
   if(SetWriteRxDataToFifo & ShiftWillEnd)
     case(RxValidBytes)  // synopsys parallel_case
-      0 : RxDataLatched2 <= {RxDataLatched1[31:8],  RxData};       // Big Endian Byte Ordering
+      // Big Endian Byte Ordering
+      0 : RxDataLatched2 <= {RxDataLatched1[31:8],  RxData};
       1 : RxDataLatched2 <= {RxDataLatched1[31:24], 24'h0};
       2 : RxDataLatched2 <= {RxDataLatched1[31:16], 16'h0};
       3 : RxDataLatched2 <= {RxDataLatched1[31:8],   8'h0};
@@ -2098,15 +2196,12 @@ begin
 end
 
 
-reg WriteRxDataToFifoSync1;
-reg WriteRxDataToFifoSync2;
-reg WriteRxDataToFifoSync3;
-
-
 // Indicating start of the reception process
-assign SetWriteRxDataToFifo = (RxValid & RxReady & ~RxStartFrm & RxEnableWindow & (&RxByteCnt)) | 
-                              (RxValid & RxReady &  RxStartFrm & (&RxPointerLSB_rst))           | 
-                              (ShiftWillEnd & LastByteIn & (&RxByteCnt));
+assign SetWriteRxDataToFifo = (RxValid & RxReady & ~RxStartFrm &
+                              RxEnableWindow & (&RxByteCnt))
+                              |(RxValid & RxReady &  RxStartFrm &
+                              (&RxPointerLSB_rst))
+                              |(ShiftWillEnd & LastByteIn & (&RxByteCnt));
 
 always @ (posedge MRxClk or posedge Reset)
 begin
@@ -2119,7 +2214,6 @@ begin
   if(WriteRxDataToFifoSync2 | RxAbort)
     WriteRxDataToFifo <= 1'b0;
 end
-
 
 
 always @ (posedge WB_CLK_I or posedge Reset)
@@ -2149,15 +2243,10 @@ begin
     WriteRxDataToFifoSync3 <= WriteRxDataToFifoSync2;
 end
 
-wire WriteRxDataToFifo_wb;
-assign WriteRxDataToFifo_wb = WriteRxDataToFifoSync2 & ~WriteRxDataToFifoSync3;
 
+assign WriteRxDataToFifo_wb = WriteRxDataToFifoSync2 &
+                              ~WriteRxDataToFifoSync3;
 
-reg LatchedRxStartFrm;
-reg SyncRxStartFrm;
-reg SyncRxStartFrm_q;
-reg SyncRxStartFrm_q2;
-wire RxFifoReset;
 
 always @ (posedge MRxClk or posedge Reset)
 begin
@@ -2203,15 +2292,25 @@ end
 
 assign RxFifoReset = SyncRxStartFrm_q & ~SyncRxStartFrm_q2;
 
-eth_fifo #(.DATA_WIDTH(RX_FIFO_DATA_WIDTH),
-	   .DEPTH(RX_FIFO_DEPTH),
-	   .CNT_WIDTH(RX_FIFO_CNT_WIDTH))
-rx_fifo (.data_in(RxDataLatched2),                      .data_out(m_wb_dat_o), 
-         .clk(WB_CLK_I),                                .reset(Reset), 
-         .write(WriteRxDataToFifo_wb & ~RxBufferFull),  .read(MasterWbRX & m_wb_ack_i), 
-         .clear(RxFifoReset),                           .full(RxBufferFull), 
-         .almost_full(),                                .almost_empty(RxBufferAlmostEmpty), 
-         .empty(RxBufferEmpty),                         .cnt(rxfifo_cnt)
+eth_fifo #(
+           .DATA_WIDTH(RX_FIFO_DATA_WIDTH),
+           .DEPTH(RX_FIFO_DEPTH),
+           .CNT_WIDTH(RX_FIFO_CNT_WIDTH))
+rx_fifo (
+         .clk            (WB_CLK_I),
+         .reset          (Reset),
+         // Inputs
+         .data_in        (RxDataLatched2),
+         .write          (WriteRxDataToFifo_wb & ~RxBufferFull),
+         .read           (MasterWbRX & m_wb_ack_i),
+         .clear          (RxFifoReset),
+         // Outputs
+         .data_out       (m_wb_dat_o), 
+         .full           (RxBufferFull),
+         .almost_full    (),
+         .almost_empty   (RxBufferAlmostEmpty), 
+         .empty          (RxBufferEmpty),
+         .cnt            (rxfifo_cnt)
         );
 
 assign enough_data_in_rxfifo_for_burst = rxfifo_cnt>=`ETH_BURST_LENGTH;
@@ -2295,11 +2394,9 @@ always @ (posedge MRxClk or posedge Reset)
 begin
   if(Reset)
     RxEnableWindow <= 1'b0;
-  else
-  if(RxStartFrm)
+  else if(RxStartFrm)
     RxEnableWindow <= 1'b1;
-  else
-  if(RxEndFrm | RxAbort)
+  else if(RxEndFrm | RxAbort)
     RxEnableWindow <= 1'b0;
 end
 
@@ -2376,7 +2473,15 @@ begin
 end
 
 
-assign RxStatusIn = {ReceivedPauseFrm, AddressMiss, RxOverrun, InvalidSymbol, DribbleNibble, ReceivedPacketTooBig, ShortFrame, LatchedCrcError, RxLateCollision};
+assign RxStatusIn = {ReceivedPauseFrm,
+                     AddressMiss,
+                     RxOverrun,
+                     InvalidSymbol,
+                     DribbleNibble,
+                     ReceivedPacketTooBig,
+                     ShortFrame,
+                     LatchedCrcError,
+                     RxLateCollision};
 
 always @ (posedge MRxClk or posedge Reset)
 begin
@@ -2393,37 +2498,25 @@ always @ (posedge WB_CLK_I or posedge Reset)
 begin
   if(Reset)
     RxOverrun <= 1'b0;
-  else
-  if(RxStatusWrite)
+  else if(RxStatusWrite)
     RxOverrun <= 1'b0;
-  else
-  if(RxBufferFull & WriteRxDataToFifo_wb)
+  else if(RxBufferFull & WriteRxDataToFifo_wb)
     RxOverrun <= 1'b1;
 end
 
 
-
-wire TxError;
 assign TxError = TxUnderRun | RetryLimit | LateCollLatched | CarrierSenseLost;
 
-wire RxError;
 
 // ShortFrame (RxStatusInLatched[2]) can not set an error because short frames
 // are aborted when signal r_RecSmall is set to 0 in MODER register. 
-// AddressMiss is identifying that a frame was received because of the promiscous
-// mode and is not an error
+// AddressMiss is identifying that a frame was received because of the
+// promiscous mode and is not an error
 assign RxError = (|RxStatusInLatched[6:3]) | (|RxStatusInLatched[1:0]);
 
 
-
-reg RxStatusWriteLatched;
-reg RxStatusWriteLatched_sync1;
-reg RxStatusWriteLatched_sync2;
-reg RxStatusWriteLatched_syncb1;
-reg RxStatusWriteLatched_syncb2;
-
-
-// Latching and synchronizing RxStatusWrite signal. This signal is used for clearing the ReceivedPauseFrm signal
+// Latching and synchronizing RxStatusWrite signal. This signal is used for
+// clearing the ReceivedPauseFrm signal
 always @ (posedge WB_CLK_I or posedge Reset)
 begin
   if(Reset)
@@ -2467,7 +2560,6 @@ begin
 end
 
 
-
 // Tx Done Interrupt
 always @ (posedge WB_CLK_I or posedge Reset)
 begin
@@ -2500,7 +2592,8 @@ begin
   if(Reset)
     RxB_IRQ <= 1'b0;
   else
-  if(RxStatusWrite & RxIRQEn & ReceivedPacketGood & (~ReceivedPauseFrm | ReceivedPauseFrm & r_PassAll & (~r_RxFlow)))
+  if(RxStatusWrite & RxIRQEn & ReceivedPacketGood &
+     (~ReceivedPauseFrm | ReceivedPauseFrm & r_PassAll & (~r_RxFlow)))
     RxB_IRQ <= (~RxError);
   else
     RxB_IRQ <= 1'b0;
@@ -2513,7 +2606,8 @@ begin
   if(Reset)
     RxE_IRQ <= 1'b0;
   else
-  if(RxStatusWrite & RxIRQEn & (~ReceivedPauseFrm | ReceivedPauseFrm & r_PassAll & (~r_RxFlow)))
+  if(RxStatusWrite & RxIRQEn & (~ReceivedPauseFrm | ReceivedPauseFrm
+     & r_PassAll & (~r_RxFlow)))
     RxE_IRQ <= RxError;
   else
     RxE_IRQ <= 1'b0;

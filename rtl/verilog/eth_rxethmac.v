@@ -3,7 +3,7 @@
 ////  eth_rxethmac.v                                              ////
 ////                                                              ////
 ////  This file is part of the Ethernet IP core project           ////
-////  http://www.opencores.org/projects,ethmac/                   ////
+////  http://www.opencores.org/project,ethmac                     ////
 ////                                                              ////
 ////  Author(s):                                                  ////
 ////      - Igor Mohor (igorM@opencores.org)                      ////
@@ -16,7 +16,7 @@
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
-//// Copyright (C) 2011 Authors                                   ////
+//// Copyright (C) 2001, 2011 Authors                             ////
 ////                                                              ////
 //// This source file may be used and distributed without         ////
 //// restriction provided that this copyright statement is not    ////
@@ -113,13 +113,13 @@
 `include "timescale.v"
 
 
-module eth_rxethmac (MRxClk, MRxDV, MRxD, Reset, Transmitting, MaxFL, r_IFG, HugEn, DlyCrcEn, 
-                     RxData, RxValid, RxStartFrm, RxEndFrm, ByteCnt, ByteCntEq0, ByteCntGreat2, 
-                     ByteCntMaxFrame, CrcError, StateIdle, StatePreamble, StateSFD, StateData,
-                     MAC, r_Pro, r_Bro,r_HASH0, r_HASH1, RxAbort, AddressMiss, PassAll, ControlFrmAddressOK
+module eth_rxethmac (MRxClk, MRxDV, MRxD, Reset, Transmitting, MaxFL, r_IFG,
+                     HugEn, DlyCrcEn, RxData, RxValid, RxStartFrm, RxEndFrm,
+                     ByteCnt, ByteCntEq0, ByteCntGreat2, ByteCntMaxFrame,
+                     CrcError, StateIdle, StatePreamble, StateSFD, StateData,
+                     MAC, r_Pro, r_Bro,r_HASH0, r_HASH1, RxAbort, AddressMiss,
+                     PassAll, ControlFrmAddressOK
                     );
-
-
 
 input         MRxClk;
 input         MRxDV;
@@ -196,47 +196,91 @@ assign MRxDEq5 = MRxD == 4'h5;
 
 
 // Rx State Machine module
-eth_rxstatem
-rxstatem1 (.MRxClk(MRxClk), .Reset(Reset), .MRxDV(MRxDV), .ByteCntEq0(ByteCntEq0), 
-                        .ByteCntGreat2(ByteCntGreat2), .Transmitting(Transmitting), .MRxDEq5(MRxDEq5), 
-                        .MRxDEqD(MRxDEqD), .IFGCounterEq24(IFGCounterEq24), .ByteCntMaxFrame(ByteCntMaxFrame), 
-                        .StateData(StateData), .StateIdle(StateIdle), .StatePreamble(StatePreamble), 
-                        .StateSFD(StateSFD), .StateDrop(StateDrop)
-                       );
+eth_rxstatem rxstatem1
+  (.MRxClk(MRxClk),
+   .Reset(Reset),
+   .MRxDV(MRxDV),
+   .ByteCntEq0(ByteCntEq0),
+   .ByteCntGreat2(ByteCntGreat2),
+   .Transmitting(Transmitting),
+   .MRxDEq5(MRxDEq5),
+   .MRxDEqD(MRxDEqD),
+   .IFGCounterEq24(IFGCounterEq24),
+   .ByteCntMaxFrame(ByteCntMaxFrame),
+   .StateData(StateData),
+   .StateIdle(StateIdle),
+   .StatePreamble(StatePreamble),
+   .StateSFD(StateSFD),
+   .StateDrop(StateDrop)
+   );
 
 
 // Rx Counters module
-eth_rxcounters
-rxcounters1 (.MRxClk(MRxClk), .Reset(Reset), .MRxDV(MRxDV), .StateIdle(StateIdle), 
-                            .StateSFD(StateSFD), .StateData(StateData), .StateDrop(StateDrop), 
-                            .StatePreamble(StatePreamble), .MRxDEqD(MRxDEqD), .DlyCrcEn(DlyCrcEn), 
-                            .DlyCrcCnt(DlyCrcCnt), .Transmitting(Transmitting), .MaxFL(MaxFL), .r_IFG(r_IFG), 
-                            .HugEn(HugEn), .IFGCounterEq24(IFGCounterEq24), .ByteCntEq0(ByteCntEq0), 
-                            .ByteCntEq1(ByteCntEq1), .ByteCntEq2(ByteCntEq2), .ByteCntEq3(ByteCntEq3), 
-                            .ByteCntEq4(ByteCntEq4), .ByteCntEq5(ByteCntEq5), .ByteCntEq6(ByteCntEq6), 
-                            .ByteCntEq7(ByteCntEq7), .ByteCntGreat2(ByteCntGreat2), 
-                            .ByteCntSmall7(ByteCntSmall7), .ByteCntMaxFrame(ByteCntMaxFrame), 
-                            .ByteCntOut(ByteCnt)
-                           );
+eth_rxcounters rxcounters1
+  (.MRxClk(MRxClk),
+   .Reset(Reset),
+   .MRxDV(MRxDV),
+   .StateIdle(StateIdle),
+   .StateSFD(StateSFD),
+   .StateData(StateData),
+   .StateDrop(StateDrop),
+   .StatePreamble(StatePreamble),
+   .MRxDEqD(MRxDEqD),
+   .DlyCrcEn(DlyCrcEn),
+   .DlyCrcCnt(DlyCrcCnt),
+   .Transmitting(Transmitting),
+   .MaxFL(MaxFL),
+   .r_IFG(r_IFG),
+   .HugEn(HugEn),
+   .IFGCounterEq24(IFGCounterEq24),
+   .ByteCntEq0(ByteCntEq0),
+   .ByteCntEq1(ByteCntEq1),
+   .ByteCntEq2(ByteCntEq2),
+   .ByteCntEq3(ByteCntEq3),
+   .ByteCntEq4(ByteCntEq4),
+   .ByteCntEq5(ByteCntEq5),
+   .ByteCntEq6(ByteCntEq6),
+   .ByteCntEq7(ByteCntEq7),
+   .ByteCntGreat2(ByteCntGreat2),
+   .ByteCntSmall7(ByteCntSmall7),
+   .ByteCntMaxFrame(ByteCntMaxFrame),
+   .ByteCntOut(ByteCnt)
+   );
 
 // Rx Address Check
 
-eth_rxaddrcheck
-rxaddrcheck1
-              (.MRxClk(MRxClk),         .Reset( Reset),             .RxData(RxData), 
-               .Broadcast (Broadcast),  .r_Bro (r_Bro),             .r_Pro(r_Pro),
-               .ByteCntEq6(ByteCntEq6), .ByteCntEq7(ByteCntEq7),    .ByteCntEq2(ByteCntEq2), 
-               .ByteCntEq3(ByteCntEq3), .ByteCntEq4(ByteCntEq4),    .ByteCntEq5(ByteCntEq5), 
-               .HASH0(r_HASH0),         .HASH1(r_HASH1),            .ByteCntEq0(ByteCntEq0),
-               .CrcHash(CrcHash),       .CrcHashGood(CrcHashGood),  .StateData(StateData),
-               .Multicast(Multicast),   .MAC(MAC),                  .RxAbort(RxAbort),
-               .RxEndFrm(RxEndFrm),     .AddressMiss(AddressMiss),  .PassAll(PassAll),
-               .ControlFrmAddressOK(ControlFrmAddressOK)
-              );
+eth_rxaddrcheck rxaddrcheck1
+  (.MRxClk(MRxClk),
+   .Reset( Reset),
+   .RxData(RxData),
+   .Broadcast (Broadcast),
+   .r_Bro (r_Bro),
+   .r_Pro(r_Pro),
+   .ByteCntEq6(ByteCntEq6),
+   .ByteCntEq7(ByteCntEq7),
+   .ByteCntEq2(ByteCntEq2),
+   .ByteCntEq3(ByteCntEq3),
+   .ByteCntEq4(ByteCntEq4),
+   .ByteCntEq5(ByteCntEq5),
+   .HASH0(r_HASH0),
+   .HASH1(r_HASH1),
+   .ByteCntEq0(ByteCntEq0),
+   .CrcHash(CrcHash),
+   .CrcHashGood(CrcHashGood),
+   .StateData(StateData),
+   .Multicast(Multicast),
+   .MAC(MAC),
+   .RxAbort(RxAbort),
+   .RxEndFrm(RxEndFrm),
+   .AddressMiss(AddressMiss),
+   .PassAll(PassAll),
+   .ControlFrmAddressOK(ControlFrmAddressOK)
+   );
 
 
 assign Enable_Crc = MRxDV & (|StateData & ~ByteCntMaxFrame);
-assign Initialize_Crc = StateSFD | DlyCrcEn & (|DlyCrcCnt[3:0]) & DlyCrcCnt[3:0] < 4'h9;
+assign Initialize_Crc = StateSFD | DlyCrcEn & (|DlyCrcCnt[3:0]) &
+                        DlyCrcCnt[3:0] < 4'h9;
 
 assign Data_Crc[0] = MRxD[3];
 assign Data_Crc[1] = MRxD[2];
@@ -245,15 +289,18 @@ assign Data_Crc[3] = MRxD[0];
 
 
 // Connecting module Crc
-eth_crc
-crcrx (.Clk(MRxClk), .Reset(Reset), .Data(Data_Crc), .Enable(Enable_Crc), .Initialize(Initialize_Crc), 
-               .Crc(Crc), .CrcError(CrcError)
-              );
-
+eth_crc crcrx
+  (.Clk(MRxClk),
+   .Reset(Reset),
+   .Data(Data_Crc),
+   .Enable(Enable_Crc),
+   .Initialize(Initialize_Crc), 
+   .Crc(Crc),
+   .CrcError(CrcError)
+   );
 
 
 // Latching CRC for use in the hash table
-
 always @ (posedge MRxClk)
 begin
   CrcHashGood <=  StateData[0] & ByteCntEq6;
@@ -268,7 +315,6 @@ begin
     CrcHash[5:0] <=  Crc[31:26];
 end
 
-
 // Output byte stream
 always @ (posedge MRxClk or posedge Reset)
 begin
@@ -281,20 +327,24 @@ begin
     end
   else
     begin
-      LatchedByte[7:0]   <=  {MRxD[3:0], LatchedByte[7:4]};  // Latched byte
+      // Latched byte
+      LatchedByte[7:0]   <=  {MRxD[3:0], LatchedByte[7:4]};
       DelayData          <=  StateData[0];
 
       if(GenerateRxValid)
-        RxData_d[7:0] <=  LatchedByte[7:0] & {8{|StateData}};  // Data goes through only in data state 
+        // Data goes through only in data state 
+        RxData_d[7:0] <=  LatchedByte[7:0] & {8{|StateData}};
       else
       if(~DelayData)
-        RxData_d[7:0] <=  8'h0;                                // Delaying data to be valid for two cycles. Zero when not active.
+        // Delaying data to be valid for two cycles.
+        // Zero when not active.
+        RxData_d[7:0] <=  8'h0;
 
-      RxData[7:0] <=  RxData_d[7:0];                           // Output data byte
+      RxData[7:0] <=  RxData_d[7:0];          // Output data byte
     end
 end
 
-    
+
 
 always @ (posedge MRxClk or posedge Reset)
 begin
@@ -345,7 +395,9 @@ begin
 end
 
 
-assign GenerateRxStartFrm = StateData[0] & (ByteCntEq1 & ~DlyCrcEn | DlyCrcCnt == 4'h3 & DlyCrcEn);
+assign GenerateRxStartFrm = StateData[0] &
+                            ((ByteCntEq1 & ~DlyCrcEn) |
+                            ((DlyCrcCnt == 4'h3) & DlyCrcEn));
 
 always @ (posedge MRxClk or posedge Reset)
 begin
@@ -362,7 +414,8 @@ begin
 end
 
 
-assign GenerateRxEndFrm = StateData[0] & (~MRxDV & ByteCntGreat2 | ByteCntMaxFrame);
+assign GenerateRxEndFrm = StateData[0] &
+                          (~MRxDV & ByteCntGreat2 | ByteCntMaxFrame);
 assign DribbleRxEndFrm  = StateData[1] &  ~MRxDV & ByteCntGreat2;
 
 

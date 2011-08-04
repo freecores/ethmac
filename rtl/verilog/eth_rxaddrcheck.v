@@ -14,7 +14,7 @@
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
-//// Copyright (C) 2011 Authors                                   ////
+//// Copyright (C) 2001, 2011 Authors                             ////
 ////                                                              ////
 //// This source file may be used and distributed without         ////
 //// restriction provided that this copyright statement is not    ////
@@ -45,10 +45,8 @@
 //
 // CVS Revision History
 //
-//
 // $Log: not supported by cvs2svn $
-//
-//  // Revision 1.8  2002/11/19 17:34:52  mohor
+// Revision 1.8  2002/11/19 17:34:52  mohor
 // AddressMiss status is connecting to the Rx BD. AddressMiss is identifying
 // that a frame was received because of the promiscous mode.
 //

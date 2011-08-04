@@ -404,7 +404,7 @@ begin
               if(NoPre & ( BitCounter == 7'h0 ))
                 BitCounter[6:0] <=  7'h21;
               else
-                BitCounter[6:0] <=  BitCounter[6:0] + 1'b1;
+                BitCounter[6:0] <=  BitCounter[6:0] + 1;
             end
           else
             BitCounter[6:0] <=  7'h0;

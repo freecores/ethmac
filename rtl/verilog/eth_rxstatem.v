@@ -133,9 +133,8 @@ assign StartData0 = MRxDV & (StateSFD & MRxDEqD & IFGCounterEq24 | StateData1);
 
 assign StartData1 = MRxDV & StateData0 & (~ByteCntMaxFrame);
 
-assign StartDrop = MRxDV & (StateIdle & Transmitting | StateSFD & ~IFGCounterEq24 &  MRxDEqD 
-                         |  StateData0 &  ByteCntMaxFrame
-                           );
+assign StartDrop = MRxDV & (StateIdle & Transmitting | StateSFD & ~IFGCounterEq24 &
+                   MRxDEqD |  StateData0 &  ByteCntMaxFrame);
 
 // Rx State Machine
 always @ (posedge MRxClk or posedge Reset)

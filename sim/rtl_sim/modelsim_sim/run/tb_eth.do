@@ -63,7 +63,7 @@
 
 vlog -reportprogress 300 -work work {../../../../rtl/verilog/eth_clockgen.v}
 vlog -reportprogress 300 -work work {../../../../rtl/verilog/eth_crc.v}
-vlog -reportprogress 300 -work work {../../../../rtl/verilog/eth_defines.v}
+vlog -reportprogress 300 -work work {../../../../rtl/verilog/ethmac_defines.v}
 vlog -reportprogress 300 -work work {../../../../rtl/verilog/eth_fifo.v}
 vlog -reportprogress 300 -work work {../../../../rtl/verilog/eth_maccontrol.v}
 vlog -reportprogress 300 -work work {../../../../rtl/verilog/eth_macstatus.v}

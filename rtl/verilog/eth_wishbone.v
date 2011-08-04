@@ -247,7 +247,7 @@
 //
 //
 
-`include "eth_defines.v"
+`include "ethmac_defines.v"
 `include "timescale.v"
 
 

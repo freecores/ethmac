@@ -148,7 +148,7 @@
 `include "eth_phy_defines.v"
 `include "wb_model_defines.v"
 `include "tb_eth_defines.v"
-`include "eth_defines.v"
+`include "ethmac_defines.v"
 `include "timescale.v"
 
 module tb_ethernet();

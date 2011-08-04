@@ -1,5 +1,5 @@
 ../../../rtl/verilog/eth_crc.v
-../../../rtl/verilog/eth_defines.v
+../../../rtl/verilog/ethmac_defines.v
 ../../../rtl/verilog/eth_maccontrol.v
 ../../../rtl/verilog/eth_macstatus.v
 ../../../rtl/verilog/eth_miim.v

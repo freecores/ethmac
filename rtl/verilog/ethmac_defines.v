@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
-////  eth_defines.v                                               ////
+////  ethmac_defines.v                                            ////
 ////                                                              ////
 ////  This file is part of the Ethernet IP core project           ////
 ////  http://www.opencores.org/project,ethmac                     ////
@@ -37,6 +37,9 @@
 //// from http://www.opencores.org/lgpl.shtml                     ////
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
+//
+// Renamed from eth_defines.v to ethmac_defines.v to fit better into
+// OpenCores defined project structure 2011-08-04 olof@opencores.org
 //
 // CVS Revision History
 //

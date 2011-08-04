@@ -125,7 +125,7 @@ updated.
 
 
 `include "tb_eth_defines.v"
-`include "eth_defines.v"
+`include "ethmac_defines.v"
 `include "timescale.v"
 
 module tb_eth_top();

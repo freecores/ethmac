@@ -744,7 +744,7 @@ begin
       ram_addr <= 8'h0;
       ram_di <= 32'h0;
       BDRead <= 1'b0;
-      BDWrite <= 1'b0;
+      BDWrite <= 0;
     end
   else
     begin
@@ -994,16 +994,16 @@ begin
       if(TxLengthLt4)
         TxLength <= 16'h0;
       else if(TxPointerLSB_rst==2'h0)
-        TxLength <= TxLength - 3'h4;    // Length is subtracted at
+        TxLength <= TxLength - 16'd4;    // Length is subtracted at
                                         // the data request
       else if(TxPointerLSB_rst==2'h1)
-        TxLength <= TxLength - 3'h3;     // Length is subtracted
+        TxLength <= TxLength - 16'd3;    // Length is subtracted
                                          // at the data request
       else if(TxPointerLSB_rst==2'h2)
-        TxLength <= TxLength - 3'h2;     // Length is subtracted
+        TxLength <= TxLength - 16'd2;    // Length is subtracted
                                          // at the data request
       else if(TxPointerLSB_rst==2'h3)
-        TxLength <= TxLength - 3'h1;     // Length is subtracted
+        TxLength <= TxLength - 16'd1;    // Length is subtracted
                                          // at the data request
     end
 end
@@ -1142,7 +1142,7 @@ begin
   else
     begin
       // Switching between two stages depends on enable signals
-      casex ({MasterWbTX,
+      casez ({MasterWbTX,
              MasterWbRX,
              ReadTxDataFromMemory_2,
              WriteRxDataToMemory,
@@ -1152,9 +1152,9 @@ begin
              rx_burst})  // synopsys parallel_case
 
         8'b00_10_00_10, // Idle and MRB needed
-        8'b10_1x_10_1x, // MRB continues
+        8'b10_1?_10_1?, // MRB continues
         8'b10_10_01_10, // Clear (previously MR) and MRB needed
-        8'b01_1x_01_1x :// Clear (previously MW) and MRB needed
+        8'b01_1?_01_1?: // Clear (previously MW) and MRB needed
           begin
             MasterWbTX <= 1'b1;  // tx burst
             MasterWbRX <= 1'b0;
@@ -1182,10 +1182,10 @@ begin
 `endif
               end
           end
-        8'b00_x1_00_x1,             // Idle and MWB needed
-        8'b01_x1_10_x1,             // MWB continues
+        8'b00_?1_00_?1,             // Idle and MWB needed
+        8'b01_?1_10_?1,             // MWB continues
         8'b01_01_01_01,             // Clear (previously MW) and MWB needed
-        8'b10_x1_01_x1 :            // Clear (previously MR) and MWB needed
+        8'b10_?1_01_?1 :            // Clear (previously MR) and MWB needed
           begin
             MasterWbTX <= 1'b0;  // rx burst
             MasterWbRX <= 1'b1;
@@ -1215,7 +1215,7 @@ begin
  `endif
               end
           end
-        8'b00_x1_00_x0 :// idle and MW is needed (data write to rx buffer)
+        8'b00_?1_00_?0 :// idle and MW is needed (data write to rx buffer)
           begin
             MasterWbTX <= 1'b0;
             MasterWbRX <= 1'b1;
@@ -1236,7 +1236,7 @@ begin
             IncrTxPointer<= 1'b1;
           end
         8'b10_10_01_00,// MR and MR is needed (data read from tx buffer)
-        8'b01_1x_01_0x  :// MW and MR is needed (data read from tx buffer)
+        8'b01_1?_01_0?  :// MW and MR is needed (data read from tx buffer)
           begin
             MasterWbTX <= 1'b1;
             MasterWbRX <= 1'b0;
@@ -1248,7 +1248,7 @@ begin
             IncrTxPointer<= 1'b1;
           end
         8'b01_01_01_00,// MW and MW needed (data write to rx buffer)
-        8'b10_x1_01_x0  :// MR and MW is needed (data write to rx buffer)
+        8'b10_?1_01_?0 :// MR and MW is needed (data write to rx buffer)
           begin
             MasterWbTX <= 1'b0;
             MasterWbRX <= 1'b1;
@@ -1261,11 +1261,11 @@ begin
           end
         8'b01_01_10_00,// MW and MW needed (cycle is cleared between
                       // previous and next access)
-        8'b01_1x_10_x0,// MW and MW or MR or MRB needed (cycle is
+        8'b01_1?_10_?0,// MW and MW or MR or MRB needed (cycle is
                     // cleared between previous and next access)
         8'b10_10_10_00,// MR and MR needed (cycle is cleared between
                        // previous and next access)
-        8'b10_x1_10_0x :// MR and MR or MW or MWB (cycle is cleared
+        8'b10_?1_10_0? :// MR and MR or MW or MWB (cycle is cleared
                        // between previous and next access)
           begin
             m_wb_cyc_o <= 1'b0;// whatever and master read or write is
@@ -1281,9 +1281,9 @@ begin
               m_wb_cti_o <= 3'b0;
 `endif
           end
-        8'bxx_00_10_00,// whatever and no master read or write is needed
+        8'b??_00_10_00,// whatever and no master read or write is needed
                        // (ack or err comes finishing previous access)
-        8'bxx_00_01_00 : // Between cyc_cleared request was cleared
+        8'b??_00_01_00 : // Between cyc_cleared request was cleared
           begin
             MasterWbTX <= 1'b0;
             MasterWbRX <= 1'b0;

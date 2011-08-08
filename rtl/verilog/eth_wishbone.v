@@ -306,6 +306,10 @@ module eth_wishbone
    mbist_ctrl_i        // bist chain shift control
 `endif
 
+`ifdef WISHBONE_DEBUG
+   ,
+   dbg_dat0
+`endif
 
 
    );
@@ -419,6 +423,11 @@ input   mbist_si_i;       // bist scan serial in
 output  mbist_so_o;       // bist scan serial out
 input [`ETH_MBIST_CTRL_WIDTH - 1:0] mbist_ctrl_i; // bist chain shift control
 `endif
+
+`ifdef WISHBONE_DEBUG
+   output [31:0] 		       dbg_dat0;
+`endif
+
 
 reg TxB_IRQ;
 reg TxE_IRQ;
@@ -2654,7 +2663,36 @@ end
 assign Busy_IRQ = Busy_IRQ_sync2 & ~Busy_IRQ_sync3;
 
 
-         
+// Assign the debug output
+`ifdef WISHBONE_DEBUG
+// Top byte, burst progress counters
+assign dbg_dat0[31] = 0;
+assign dbg_dat0[30:28] = rx_burst_cnt;
+assign dbg_dat0[27] = 0;
+assign dbg_dat0[26:24] = tx_burst_cnt;
+// Third byte
+assign dbg_dat0[23] = 0; //rx_ethside_fifo_sel;
+assign dbg_dat0[22] = 0; //rx_wbside_fifo_sel;
+assign dbg_dat0[21] = 0; //rx_fifo0_empty;
+assign dbg_dat0[20] = 0; //rx_fifo1_empty;
+assign dbg_dat0[19] = 0; //overflow_bug_reset;
+assign dbg_dat0[18] = 0; //RxBDOK;
+assign dbg_dat0[17] = 0; //write_rx_data_to_memory_go;
+assign dbg_dat0[16] = 0; //rx_wb_last_writes;
+// Second byte - TxBDAddress - or TX BD address pointer
+assign dbg_dat0[15:8] = { BlockingTxBDRead , TxBDAddress};
+// Bottom byte - FSM controlling vector
+assign dbg_dat0[7:0] = {MasterWbTX,
+                       MasterWbRX,
+                       ReadTxDataFromMemory_2,
+                       WriteRxDataToMemory,
+                       MasterAccessFinished,
+                       cyc_cleared,
+                       tx_burst,
+                       rx_burst};
+`else
+assign dbg_dat0 = 0;
+`endif
 
 
 endmodule

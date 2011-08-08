@@ -350,6 +350,8 @@ output  mbist_so_o;       // bist scan serial out
 input [`ETH_MBIST_CTRL_WIDTH - 1:0] mbist_ctrl_i;       // bist chain shift control
 `endif
 
+wire    [31:0]  wb_dbg_dat0;
+
 wire     [7:0]  r_ClkDiv;
 wire            r_MiiNoPre;
 wire    [15:0]  r_CtrlData;
@@ -573,6 +575,7 @@ eth_registers ethreg1
   .r_HASH0(r_HASH0),                      .r_HASH1(r_HASH1),                          .r_TxPauseRq(r_TxPauseRq), 
   .r_TxPauseTV(r_TxPauseTV),              .RstTxPauseRq(RstTxPauseRq),                .TxCtrlEndFrm(TxCtrlEndFrm), 
   .StartTxDone(StartTxDone),              .TxClk(mtx_clk_pad_i),                      .RxClk(mrx_clk_pad_i), 
+  .dbg_dat(wb_dbg_dat0),
   .SetPauseTimer(SetPauseTimer)
   
 );
@@ -947,6 +950,11 @@ wishbone
   .mbist_so_o       (mbist_so_o),
   .mbist_ctrl_i       (mbist_ctrl_i)
 `endif
+`ifdef WISHBONE_DEBUG
+  ,
+  .dbg_dat0(wb_dbg_dat0)
+`endif
+
 );
 
 assign m_wb_adr_o = {m_wb_adr_tmp, 2'h0};

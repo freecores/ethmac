@@ -178,6 +178,7 @@ module eth_registers( DataIn, Address, Rw, Cs, Clk, Reset, DataOut,
                       LinkFail, r_MAC, WCtrlDataStart, RStatStart,
                       UpdateMIIRX_DATAReg, Prsd, r_TxBDNum, int_o,
                       r_HASH0, r_HASH1, r_TxPauseTV, r_TxPauseRq, RstTxPauseRq, TxCtrlEndFrm,
+                      dbg_dat,
                       StartTxDone, TxClk, RxClk, SetPauseTimer
                     );
 
@@ -268,6 +269,8 @@ input        TxClk;
 input        RxClk;
 input        SetPauseTimer;
 
+input [31:0] dbg_dat; // debug data input
+
 reg          irq_txb;
 reg          irq_txe;
 reg          irq_rxb;
@@ -311,6 +314,7 @@ wire HASH0_Sel      = (Address == `ETH_HASH0_ADR       );
 wire HASH1_Sel      = (Address == `ETH_HASH1_ADR       );
 wire TXCTRL_Sel     = (Address == `ETH_TX_CTRL_ADR     );
 wire RXCTRL_Sel     = (Address == `ETH_RX_CTRL_ADR     );
+wire DBG_REG_Sel    = (Address == `ETH_DBG_ADR         );
 wire TX_BD_NUM_Sel  = (Address == `ETH_TX_BD_NUM_ADR   );
 
 
@@ -402,6 +406,7 @@ wire [31:0] TX_BD_NUMOut;
 wire [31:0] HASH0Out;
 wire [31:0] HASH1Out;
 wire [31:0] TXCTRLOut;
+wire [31:0] DBGOut;
 
 // MODER Register
 eth_register #(`ETH_MODER_WIDTH_0, `ETH_MODER_DEF_0)        MODER_0
@@ -871,7 +876,7 @@ begin
         `ETH_HASH0_ADR        :  DataOut=HASH0Out;
         `ETH_HASH1_ADR        :  DataOut=HASH1Out;
         `ETH_TX_CTRL_ADR      :  DataOut=TXCTRLOut;
-
+        `ETH_DBG_ADR          :  DataOut=dbg_dat;
         default:             DataOut=32'h0;
       endcase
     end

@@ -222,7 +222,7 @@
 `define ETH_HASH1_ADR         8'h13   // 0x4C
 `define ETH_TX_CTRL_ADR       8'h14   // 0x50
 `define ETH_RX_CTRL_ADR       8'h15   // 0x54
-
+`define ETH_DBG_ADR           8'h16   // 0x58
 
 `define ETH_MODER_DEF_0         8'h00
 `define ETH_MODER_DEF_1         8'hA0

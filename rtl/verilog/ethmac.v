@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
-////  eth_top.v                                                   ////
+////  ethmac.v                                                    ////
 ////                                                              ////
 ////  This file is part of the Ethernet IP core project           ////
 ////  http://www.opencores.org/project,ethmac                     ////
@@ -37,6 +37,10 @@
 //// from http://www.opencores.org/lgpl.shtml                     ////
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
+//
+// 2011-08-09 olof@opencores.org
+// Renamed from eth_top.v to ethmac.v to better fit into the OpenCores
+// Structure
 //
 // CVS Revision History
 //
@@ -238,7 +242,7 @@
 `include "timescale.v"
 
 
-module eth_top
+module ethmac
 (
   // WISHBONE common
   wb_clk_i, wb_rst_i, wb_dat_i, wb_dat_o, 

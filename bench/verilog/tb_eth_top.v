@@ -197,7 +197,7 @@ reg [5:0] g_last_txbd;
 
 // Connecting Ethernet top module
 
-eth_top ethtop
+ethmac ethtop
 (
   // WISHBONE common
   .wb_clk_i(WB_CLK_I), .wb_rst_i(WB_RST_I), .wb_dat_i(WB_DAT_I), .wb_dat_o(WB_DAT_O), 

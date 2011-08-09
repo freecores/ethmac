@@ -13,7 +13,7 @@
 ../../../rtl/verilog/eth_rxstatem.v
 ../../../rtl/verilog/eth_shiftreg.v
 ../../../rtl/verilog/timescale.v
-../../../rtl/verilog/eth_top.v
+../../../rtl/verilog/ethmac.v
 ../../../rtl/verilog/eth_transmitcontrol.v
 ../../../rtl/verilog/eth_txcounters.v
 ../../../rtl/verilog/eth_txethmac.v

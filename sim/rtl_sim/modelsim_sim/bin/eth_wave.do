@@ -43,7 +43,7 @@ add wave -noupdate -format Logic -radix hexadecimal /tb_ethernet/wbm_subseq_wait
 add wave -noupdate -format Logic -radix hexadecimal /tb_ethernet/wbs_waits
 add wave -noupdate -format Logic -radix hexadecimal /tb_ethernet/wbs_retries
 
-add wave -noupdate -format Logic -radix hex /tb_ethernet/eth_top/wishbone/*
+add wave -noupdate -format Logic -radix hex /tb_ethernet/ethmac/wishbone/*
 add wave -noupdate -format Logic -radix decimal /tb_ethernet/test_mac_full_duplex_receive/i_length
 add wave -noupdate -format Logic -radix decimal /tb_ethernet/test_mac_full_duplex_receive/num_of_bd
 add wave -noupdate -format Logic -radix decimal /tb_ethernet/test_mac_full_duplex_transmit/max_tmp

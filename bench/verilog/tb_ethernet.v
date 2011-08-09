@@ -197,7 +197,7 @@ wire  [1:0] eth_ma_wb_bte_o;
 
 
 // Connecting Ethernet top module
-eth_top eth_top
+ethmac eth_top
 (
   // WISHBONE common
   .wb_clk_i(wb_clk),              .wb_rst_i(wb_rst), 

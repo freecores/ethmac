@@ -163,7 +163,7 @@ eth_cop i_eth_cop
 
 
 // Connecting Ethernet top module
-eth_top ethtop
+ethmac ethtop
 (
   // WISHBONE common
   .wb_clk_i(wb_clk_o),              .wb_rst_i(wb_rst_o), 

@@ -152,75 +152,75 @@ add group \
 
 add group \
     "WISHBONE common" \
-      tb_ethernet.eth_top.wb_clk_i \
-      tb_ethernet.eth_top.wb_rst_i \
-      tb_ethernet.eth_top.wb_dat_i[31:0]'h \
-      tb_ethernet.eth_top.wb_dat_o[31:0]'h \
-      tb_ethernet.eth_top.wb_err_o \
+      tb_ethernet.ethmac.wb_clk_i \
+      tb_ethernet.ethmac.wb_rst_i \
+      tb_ethernet.ethmac.wb_dat_i[31:0]'h \
+      tb_ethernet.ethmac.wb_dat_o[31:0]'h \
+      tb_ethernet.ethmac.wb_err_o \
 
 add group \
     "WISHBONE slave signals" \
-      tb_ethernet.eth_top.wb_adr_i[11:2]'h \
-      tb_ethernet.eth_top.wb_sel_i[3:0]'h \
-      tb_ethernet.eth_top.wb_we_i \
-      tb_ethernet.eth_top.wb_cyc_i \
-      tb_ethernet.eth_top.wb_stb_i \
-      tb_ethernet.eth_top.wb_ack_o \
+      tb_ethernet.ethmac.wb_adr_i[11:2]'h \
+      tb_ethernet.ethmac.wb_sel_i[3:0]'h \
+      tb_ethernet.ethmac.wb_we_i \
+      tb_ethernet.ethmac.wb_cyc_i \
+      tb_ethernet.ethmac.wb_stb_i \
+      tb_ethernet.ethmac.wb_ack_o \
 
 add group \
     "WISHBONE master signals" \
-      tb_ethernet.eth_top.m_wb_adr_o[31:0]'h \
-      tb_ethernet.eth_top.m_wb_sel_o[3:0]'h \
-      tb_ethernet.eth_top.m_wb_we_o \
-      tb_ethernet.eth_top.m_wb_dat_i[31:0]'h \
-      tb_ethernet.eth_top.m_wb_dat_o[31:0]'h \
-      tb_ethernet.eth_top.m_wb_cyc_o \
-      tb_ethernet.eth_top.m_wb_stb_o \
-      tb_ethernet.eth_top.m_wb_ack_i \
-      tb_ethernet.eth_top.m_wb_err_i \
+      tb_ethernet.ethmac.m_wb_adr_o[31:0]'h \
+      tb_ethernet.ethmac.m_wb_sel_o[3:0]'h \
+      tb_ethernet.ethmac.m_wb_we_o \
+      tb_ethernet.ethmac.m_wb_dat_i[31:0]'h \
+      tb_ethernet.ethmac.m_wb_dat_o[31:0]'h \
+      tb_ethernet.ethmac.m_wb_cyc_o \
+      tb_ethernet.ethmac.m_wb_stb_o \
+      tb_ethernet.ethmac.m_wb_ack_i \
+      tb_ethernet.ethmac.m_wb_err_i \
 
 add group \
     "MAC common" \
-      tb_ethernet.eth_top.mcoll_pad_i \
-      tb_ethernet.eth_top.mcrs_pad_i \
+      tb_ethernet.ethmac.mcoll_pad_i \
+      tb_ethernet.ethmac.mcrs_pad_i \
 
 add group \
     "MAC TX" \
-      tb_ethernet.eth_top.mtx_clk_pad_i \
-      tb_ethernet.eth_top.mtxd_pad_o[3:0]'h \
-      tb_ethernet.eth_top.mtxen_pad_o \
-      tb_ethernet.eth_top.mtxerr_pad_o \
+      tb_ethernet.ethmac.mtx_clk_pad_i \
+      tb_ethernet.ethmac.mtxd_pad_o[3:0]'h \
+      tb_ethernet.ethmac.mtxen_pad_o \
+      tb_ethernet.ethmac.mtxerr_pad_o \
 
 add group \
     "MAC RX" \
-      tb_ethernet.eth_top.mrx_clk_pad_i \
-      tb_ethernet.eth_top.mrxd_pad_i[3:0]'h \
-      tb_ethernet.eth_top.mrxdv_pad_i \
-      tb_ethernet.eth_top.mrxerr_pad_i \
+      tb_ethernet.ethmac.mrx_clk_pad_i \
+      tb_ethernet.ethmac.mrxd_pad_i[3:0]'h \
+      tb_ethernet.ethmac.mrxdv_pad_i \
+      tb_ethernet.ethmac.mrxerr_pad_i \
 
 add group \
     "MAC MIIM interface" \
-      tb_ethernet.eth_top.mdc_pad_o \
-      tb_ethernet.eth_top.md_padoe_o \
-      tb_ethernet.eth_top.md_pad_o \
-      tb_ethernet.eth_top.md_pad_i \
-      tb_ethernet.eth_top.miim1.Busy \
-      tb_ethernet.eth_top.miim1.LinkFail \
-      tb_ethernet.eth_top.miim1.Nvalid \
-      tb_ethernet.eth_top.miim1.CtrlData[15:0]'h \
-      tb_ethernet.eth_top.miim1.UpdateMIIRX_DATAReg \
-      tb_ethernet.eth_top.miim1.Prsd[15:0]'h \
-      tb_ethernet.eth_top.miim1.Divider[7:0]'h \
+      tb_ethernet.ethmac.mdc_pad_o \
+      tb_ethernet.ethmac.md_padoe_o \
+      tb_ethernet.ethmac.md_pad_o \
+      tb_ethernet.ethmac.md_pad_i \
+      tb_ethernet.ethmac.miim1.Busy \
+      tb_ethernet.ethmac.miim1.LinkFail \
+      tb_ethernet.ethmac.miim1.Nvalid \
+      tb_ethernet.ethmac.miim1.CtrlData[15:0]'h \
+      tb_ethernet.ethmac.miim1.UpdateMIIRX_DATAReg \
+      tb_ethernet.ethmac.miim1.Prsd[15:0]'h \
+      tb_ethernet.ethmac.miim1.Divider[7:0]'h \
 
 add group \
     "Test signals" \
       tb_ethernet.test_name[799:0]'a \
-      tb_ethernet.eth_top.ethreg1.MIISTATUSOut[31:0]'h \
-      tb_ethernet.eth_top.miim1.InProgress \
-      tb_ethernet.eth_top.miim1.InProgress_q1 \
-      tb_ethernet.eth_top.miim1.InProgress_q2 \
-      tb_ethernet.eth_top.miim1.InProgress_q3 \
-      tb_ethernet.eth_top.miim1.shftrg.ShiftReg[7:0]'h \
+      tb_ethernet.ethmac.ethreg1.MIISTATUSOut[31:0]'h \
+      tb_ethernet.ethmac.miim1.InProgress \
+      tb_ethernet.ethmac.miim1.InProgress_q1 \
+      tb_ethernet.ethmac.miim1.InProgress_q2 \
+      tb_ethernet.ethmac.miim1.InProgress_q3 \
+      tb_ethernet.ethmac.miim1.shftrg.ShiftReg[7:0]'h \
       tb_ethernet.eth_phy.status_bit6_0[6:0]'h \
       tb_ethernet.eth_phy.control_bit8_0[8:0]'h \
       tb_ethernet.eth_phy.control_bit9 \

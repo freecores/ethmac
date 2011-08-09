@@ -152,55 +152,55 @@ add group \
 
 add group \
     "WISHBONE common" \
-      tb_ethernet.eth_top.wb_clk_i \
-      tb_ethernet.eth_top.wb_rst_i \
-      tb_ethernet.eth_top.wb_dat_i[31:0]'h \
-      tb_ethernet.eth_top.wb_dat_o[31:0]'h \
-      tb_ethernet.eth_top.wb_err_o \
+      tb_ethernet.ethmac.wb_clk_i \
+      tb_ethernet.ethmac.wb_rst_i \
+      tb_ethernet.ethmac.wb_dat_i[31:0]'h \
+      tb_ethernet.ethmac.wb_dat_o[31:0]'h \
+      tb_ethernet.ethmac.wb_err_o \
 
 add group \
     "WISHBONE slave signals" \
       tb_ethernet.eth_sl_wb_dat_i[31:0]'h \
       tb_ethernet.eth_sl_wb_dat_o[31:0]'h \
-      tb_ethernet.eth_top.wb_adr_i[11:2]'h \
-      tb_ethernet.eth_top.wb_sel_i[3:0]'h \
-      tb_ethernet.eth_top.wb_we_i \
-      tb_ethernet.eth_top.wb_cyc_i \
-      tb_ethernet.eth_top.wb_stb_i \
-      tb_ethernet.eth_top.wb_ack_o \
+      tb_ethernet.ethmac.wb_adr_i[11:2]'h \
+      tb_ethernet.ethmac.wb_sel_i[3:0]'h \
+      tb_ethernet.ethmac.wb_we_i \
+      tb_ethernet.ethmac.wb_cyc_i \
+      tb_ethernet.ethmac.wb_stb_i \
+      tb_ethernet.ethmac.wb_ack_o \
 
 add group \
     "WISHBONE master signals" \
-      tb_ethernet.eth_top.m_wb_adr_o[31:0]'h \
-      tb_ethernet.eth_top.m_wb_sel_o[3:0]'h \
-      tb_ethernet.eth_top.m_wb_we_o \
-      tb_ethernet.eth_top.m_wb_dat_i[31:0]'h \
-      tb_ethernet.eth_top.m_wb_dat_o[31:0]'h \
-      tb_ethernet.eth_top.m_wb_cyc_o \
-      tb_ethernet.eth_top.m_wb_stb_o \
-      tb_ethernet.eth_top.m_wb_ack_i \
-      tb_ethernet.eth_top.m_wb_err_i \
+      tb_ethernet.ethmac.m_wb_adr_o[31:0]'h \
+      tb_ethernet.ethmac.m_wb_sel_o[3:0]'h \
+      tb_ethernet.ethmac.m_wb_we_o \
+      tb_ethernet.ethmac.m_wb_dat_i[31:0]'h \
+      tb_ethernet.ethmac.m_wb_dat_o[31:0]'h \
+      tb_ethernet.ethmac.m_wb_cyc_o \
+      tb_ethernet.ethmac.m_wb_stb_o \
+      tb_ethernet.ethmac.m_wb_ack_i \
+      tb_ethernet.ethmac.m_wb_err_i \
 
 add group \
     "WISHBONE RX memory" \
-      tb_ethernet.eth_top.wishbone.TxLength[15:0]'h \
-      tb_ethernet.eth_top.wishbone.TxLengthEq0 \
-      tb_ethernet.eth_top.wishbone.TxLengthLt4 \
-      tb_ethernet.eth_top.wishbone.TxPointerLSB[1:0]'h \
-      tb_ethernet.eth_top.wishbone.TxPointerLSB_rst[1:0]'h \
-      tb_ethernet.eth_top.wishbone.TxPointerMSB[31:2]'h \
-      tb_ethernet.eth_top.wishbone.TxPointerRead \
-      tb_ethernet.eth_top.wishbone.TxBDReady \
-      tb_ethernet.eth_top.wishbone.TxBufferAlmostEmpty \
-      tb_ethernet.eth_top.wishbone.TxBufferAlmostFull \
-      tb_ethernet.eth_top.wishbone.TxBufferEmpty \
-      tb_ethernet.eth_top.wishbone.TxBufferFull \
-      tb_ethernet.eth_top.wishbone.TxData_wb[31:0]'h \
-      tb_ethernet.eth_top.wishbone.TxData[7:0]'h \
-      tb_ethernet.eth_top.wishbone.TxDataLatched[31:0]'h \
-      tb_ethernet.eth_top.wishbone.TxByteCnt[1:0]'h \
-      tb_ethernet.eth_top.wishbone.TxStatus[14:11]'h \
-      tb_ethernet.eth_top.wishbone.TxStatusInLatched[8:0]'h \
+      tb_ethernet.ethmac.wishbone.TxLength[15:0]'h \
+      tb_ethernet.ethmac.wishbone.TxLengthEq0 \
+      tb_ethernet.ethmac.wishbone.TxLengthLt4 \
+      tb_ethernet.ethmac.wishbone.TxPointerLSB[1:0]'h \
+      tb_ethernet.ethmac.wishbone.TxPointerLSB_rst[1:0]'h \
+      tb_ethernet.ethmac.wishbone.TxPointerMSB[31:2]'h \
+      tb_ethernet.ethmac.wishbone.TxPointerRead \
+      tb_ethernet.ethmac.wishbone.TxBDReady \
+      tb_ethernet.ethmac.wishbone.TxBufferAlmostEmpty \
+      tb_ethernet.ethmac.wishbone.TxBufferAlmostFull \
+      tb_ethernet.ethmac.wishbone.TxBufferEmpty \
+      tb_ethernet.ethmac.wishbone.TxBufferFull \
+      tb_ethernet.ethmac.wishbone.TxData_wb[31:0]'h \
+      tb_ethernet.ethmac.wishbone.TxData[7:0]'h \
+      tb_ethernet.ethmac.wishbone.TxDataLatched[31:0]'h \
+      tb_ethernet.ethmac.wishbone.TxByteCnt[1:0]'h \
+      tb_ethernet.ethmac.wishbone.TxStatus[14:11]'h \
+      tb_ethernet.ethmac.wishbone.TxStatusInLatched[8:0]'h \
       tb_ethernet.test_mac_full_duplex_transmit.max_tmp[15:0]'h \
       tb_ethernet.test_mac_full_duplex_transmit.min_tmp[15:0]'h \
       tb_ethernet.test_mac_full_duplex_transmit.i_length'h \
@@ -281,40 +281,40 @@ add group \
 
 add group \
     "MAC FIFO" \
-      tb_ethernet.eth_top.wishbone.rx_fifo.write \
-      tb_ethernet.eth_top.wishbone.rx_fifo.data_in[31:0]'h \
-      tb_ethernet.eth_top.wishbone.rx_fifo.write_pointer[3:0]'h \
-      tb_ethernet.eth_top.wishbone.rx_fifo.almost_full \
-      tb_ethernet.eth_top.wishbone.rx_fifo.full \
-      tb_ethernet.eth_top.wishbone.rx_fifo.read \
-      tb_ethernet.eth_top.wishbone.rx_fifo.data_out[31:0]'h \
-      tb_ethernet.eth_top.wishbone.rx_fifo.read_pointer[3:0]'h \
-      tb_ethernet.eth_top.wishbone.rx_fifo.almost_empty \
-      tb_ethernet.eth_top.wishbone.rx_fifo.empty \
+      tb_ethernet.ethmac.wishbone.rx_fifo.write \
+      tb_ethernet.ethmac.wishbone.rx_fifo.data_in[31:0]'h \
+      tb_ethernet.ethmac.wishbone.rx_fifo.write_pointer[3:0]'h \
+      tb_ethernet.ethmac.wishbone.rx_fifo.almost_full \
+      tb_ethernet.ethmac.wishbone.rx_fifo.full \
+      tb_ethernet.ethmac.wishbone.rx_fifo.read \
+      tb_ethernet.ethmac.wishbone.rx_fifo.data_out[31:0]'h \
+      tb_ethernet.ethmac.wishbone.rx_fifo.read_pointer[3:0]'h \
+      tb_ethernet.ethmac.wishbone.rx_fifo.almost_empty \
+      tb_ethernet.ethmac.wishbone.rx_fifo.empty \
 
 add group \
     "MAC registers" \
-      tb_ethernet.eth_top.ethreg1.MODEROut[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.INT_SOURCEOut[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.INT_MASKOut[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.IPGTOut[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.IPGR1Out[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.IPGR2Out[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.PACKETLENOut[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.COLLCONFOut[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.TX_BD_NUMOut[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.CTRLMODEROut[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.MIIMODEROut[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.MIICOMMANDOut[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.MIIADDRESSOut[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.MIITX_DATAOut[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.MIIRX_DATAOut[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.MIISTATUSOut[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.MAC_ADDR0Out[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.MAC_ADDR1Out[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.HASH0Out[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.HASH1Out[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.TXCTRLOut[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.MODEROut[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.INT_SOURCEOut[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.INT_MASKOut[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.IPGTOut[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.IPGR1Out[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.IPGR2Out[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.PACKETLENOut[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.COLLCONFOut[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.TX_BD_NUMOut[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.CTRLMODEROut[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.MIIMODEROut[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.MIICOMMANDOut[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.MIIADDRESSOut[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.MIITX_DATAOut[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.MIIRX_DATAOut[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.MIISTATUSOut[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.MAC_ADDR0Out[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.MAC_ADDR1Out[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.HASH0Out[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.HASH1Out[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.TXCTRLOut[31:0]'h \
 
 add group \
     testbench_test_signals \
@@ -323,55 +323,55 @@ add group \
 
 add group \
     "MAC common" \
-      tb_ethernet.eth_top.mcoll_pad_i \
-      tb_ethernet.eth_top.mcrs_pad_i \
+      tb_ethernet.ethmac.mcoll_pad_i \
+      tb_ethernet.ethmac.mcrs_pad_i \
 
 add group \
     "MAC TX" \
-      tb_ethernet.eth_top.mtx_clk_pad_i \
-      tb_ethernet.eth_top.mtxd_pad_o[3:0]'h \
-      tb_ethernet.eth_top.mtxen_pad_o \
-      tb_ethernet.eth_top.mtxerr_pad_o \
+      tb_ethernet.ethmac.mtx_clk_pad_i \
+      tb_ethernet.ethmac.mtxd_pad_o[3:0]'h \
+      tb_ethernet.ethmac.mtxen_pad_o \
+      tb_ethernet.ethmac.mtxerr_pad_o \
 
 add group \
     "MAC RX" \
-      tb_ethernet.eth_top.mrx_clk_pad_i \
-      tb_ethernet.eth_top.mrxd_pad_i[3:0]'h \
-      tb_ethernet.eth_top.mrxdv_pad_i \
-      tb_ethernet.eth_top.mrxerr_pad_i \
+      tb_ethernet.ethmac.mrx_clk_pad_i \
+      tb_ethernet.ethmac.mrxd_pad_i[3:0]'h \
+      tb_ethernet.ethmac.mrxdv_pad_i \
+      tb_ethernet.ethmac.mrxerr_pad_i \
 
 add group \
     "MAC MIIM interface" \
-      tb_ethernet.eth_top.mdc_pad_o \
-      tb_ethernet.eth_top.md_padoe_o \
-      tb_ethernet.eth_top.md_pad_o \
-      tb_ethernet.eth_top.md_pad_i \
-      tb_ethernet.eth_top.miim1.Busy \
-      tb_ethernet.eth_top.miim1.LinkFail \
-      tb_ethernet.eth_top.miim1.Nvalid \
-      tb_ethernet.eth_top.miim1.CtrlData[15:0]'h \
-      tb_ethernet.eth_top.miim1.UpdateMIIRX_DATAReg \
-      tb_ethernet.eth_top.miim1.Prsd[15:0]'h \
-      tb_ethernet.eth_top.miim1.Divider[7:0]'h \
+      tb_ethernet.ethmac.mdc_pad_o \
+      tb_ethernet.ethmac.md_padoe_o \
+      tb_ethernet.ethmac.md_pad_o \
+      tb_ethernet.ethmac.md_pad_i \
+      tb_ethernet.ethmac.miim1.Busy \
+      tb_ethernet.ethmac.miim1.LinkFail \
+      tb_ethernet.ethmac.miim1.Nvalid \
+      tb_ethernet.ethmac.miim1.CtrlData[15:0]'h \
+      tb_ethernet.ethmac.miim1.UpdateMIIRX_DATAReg \
+      tb_ethernet.ethmac.miim1.Prsd[15:0]'h \
+      tb_ethernet.ethmac.miim1.Divider[7:0]'h \
 
 add group \
     "Test signals" \
       tb_ethernet.test_name[799:0]'a \
-      tb_ethernet.eth_top.miim1.Nvalid \
-      tb_ethernet.eth_top.miim1.Busy \
-      tb_ethernet.eth_top.miim1.LinkFail \
-      tb_ethernet.eth_top.miim1.WriteDataOp \
-      tb_ethernet.eth_top.miim1.ReadStatusOp \
-      tb_ethernet.eth_top.miim1.ScanStatusOp \
-      tb_ethernet.eth_top.ethreg1.MIISTATUSOut[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.MIITX_DATAOut[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.MIIRX_DATAOut[31:0]'h \
-      tb_ethernet.eth_top.ethreg1.MIIMODEROut[31:0]'h \
-      tb_ethernet.eth_top.miim1.InProgress \
-      tb_ethernet.eth_top.miim1.InProgress_q1 \
-      tb_ethernet.eth_top.miim1.InProgress_q2 \
-      tb_ethernet.eth_top.miim1.InProgress_q3 \
-      tb_ethernet.eth_top.miim1.shftrg.ShiftReg[7:0]'h \
+      tb_ethernet.ethmac.miim1.Nvalid \
+      tb_ethernet.ethmac.miim1.Busy \
+      tb_ethernet.ethmac.miim1.LinkFail \
+      tb_ethernet.ethmac.miim1.WriteDataOp \
+      tb_ethernet.ethmac.miim1.ReadStatusOp \
+      tb_ethernet.ethmac.miim1.ScanStatusOp \
+      tb_ethernet.ethmac.ethreg1.MIISTATUSOut[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.MIITX_DATAOut[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.MIIRX_DATAOut[31:0]'h \
+      tb_ethernet.ethmac.ethreg1.MIIMODEROut[31:0]'h \
+      tb_ethernet.ethmac.miim1.InProgress \
+      tb_ethernet.ethmac.miim1.InProgress_q1 \
+      tb_ethernet.ethmac.miim1.InProgress_q2 \
+      tb_ethernet.ethmac.miim1.InProgress_q3 \
+      tb_ethernet.ethmac.miim1.shftrg.ShiftReg[7:0]'h \
       tb_ethernet.eth_phy.status_bit6_0[6:0]'h \
       tb_ethernet.eth_phy.control_bit8_0[8:0]'h \
       tb_ethernet.eth_phy.control_bit9 \

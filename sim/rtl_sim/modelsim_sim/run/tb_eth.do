@@ -79,7 +79,7 @@ vlog -reportprogress 300 -work work {../../../../rtl/verilog/eth_rxethmac.v}
 vlog -reportprogress 300 -work work {../../../../rtl/verilog/eth_rxstatem.v}
 vlog -reportprogress 300 -work work {../../../../rtl/verilog/eth_shiftreg.v}
 vlog -reportprogress 300 -work work {../../../../rtl/verilog/eth_spram_256x32.v}
-vlog -reportprogress 300 -work work {../../../../rtl/verilog/eth_top.v}
+vlog -reportprogress 300 -work work {../../../../rtl/verilog/ethmac.v}
 vlog -reportprogress 300 -work work {../../../../rtl/verilog/eth_transmitcontrol.v}
 vlog -reportprogress 300 -work work {../../../../rtl/verilog/eth_txcounters.v}
 vlog -reportprogress 300 -work work {../../../../rtl/verilog/eth_txethmac.v}

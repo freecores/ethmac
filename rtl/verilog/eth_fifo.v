@@ -152,14 +152,14 @@ assign almost_full  = &cnt[CNT_WIDTH-2:0];
   );
 `else   // !ETH_FIFO_XILINX
 `ifdef ETH_ALTERA_ALTSYNCRAM
-  altera_dpram_16x32	altera_dpram_16x32_inst
+  altera_dpram_16x32  altera_dpram_16x32_inst
   (
-  	.data             (data_in),
-  	.wren             (write & ~full),
-  	.wraddress        (clear ? {CNT_WIDTH-1{1'b0}} : write_pointer),
-  	.rdaddress        (clear ? {CNT_WIDTH-1{1'b0}} : read_pointer ),
-  	.clock            (clk),
-  	.q                (data_out)
+    .data             (data_in),
+    .wren             (write & ~full),
+    .wraddress        (clear ? {CNT_WIDTH-1{1'b0}} : write_pointer),
+    .rdaddress        (clear ? {CNT_WIDTH-1{1'b0}} : read_pointer ),
+    .clock            (clk),
+    .q                (data_out)
   );  //exemplar attribute altera_dpram_16x32_inst NOOPT TRUE
 `else   // !ETH_ALTERA_ALTSYNCRAM
   always @ (posedge clk)

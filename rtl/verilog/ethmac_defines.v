@@ -330,6 +330,3 @@
 `define ETH_BURST_LENGTH       4    // Change also ETH_BURST_CNT_WIDTH
 `define ETH_BURST_CNT_WIDTH    3    // The counter must be width enough to count to ETH_BURST_LENGTH
 
-// WISHBONE interface is Revision B3 compliant (uncomment when needed)
-//`define ETH_WISHBONE_B3
-

@@ -255,9 +255,7 @@ module ethmac
   m_wb_dat_o, m_wb_dat_i, m_wb_cyc_o, 
   m_wb_stb_o, m_wb_ack_i, m_wb_err_i, 
 
-`ifdef ETH_WISHBONE_B3
   m_wb_cti_o, m_wb_bte_o, 
-`endif
 
   //TX
   mtx_clk_pad_i, mtxd_pad_o, mtxen_pad_o, mtxerr_pad_o,
@@ -318,10 +316,8 @@ input           m_wb_err_i;
 
 wire    [29:0]  m_wb_adr_tmp;
 
-`ifdef ETH_WISHBONE_B3
 output   [2:0]  m_wb_cti_o;   // Cycle Type Identifier
 output   [1:0]  m_wb_bte_o;   // Burst Type Extension
-`endif
 
 // Tx
 input           mtx_clk_pad_i; // Transmit clock (from PHY)
@@ -1048,10 +1044,8 @@ wishbone
   .m_wb_ack_i(m_wb_ack_i),
   .m_wb_err_i(m_wb_err_i),
   
-`ifdef ETH_WISHBONE_B3
   .m_wb_cti_o(m_wb_cti_o),
   .m_wb_bte_o(m_wb_bte_o), 
-`endif
 
     //TX
   .MTxClk(mtx_clk_pad_i),

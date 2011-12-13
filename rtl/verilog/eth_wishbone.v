@@ -268,9 +268,7 @@ module eth_wishbone
    m_wb_dat_o, m_wb_dat_i, m_wb_cyc_o, 
    m_wb_stb_o, m_wb_ack_i, m_wb_err_i, 
 
-`ifdef ETH_WISHBONE_B3
    m_wb_cti_o, m_wb_bte_o, 
-`endif
 
    //TX
    MTxClk, TxStartFrm, TxEndFrm, TxUsedData, TxData, 
@@ -343,11 +341,9 @@ input   [31:0]  m_wb_dat_i;     //
 input           m_wb_ack_i;     // 
 input           m_wb_err_i;     // 
 
-`ifdef ETH_WISHBONE_B3
 output   [2:0]  m_wb_cti_o;     // Cycle Type Identifier
 output   [1:0]  m_wb_bte_o;     // Burst Type Extension
 reg      [2:0]  m_wb_cti_o;     // Cycle Type Identifier
-`endif
 
 input           Reset;       // Reset signal
 
@@ -425,7 +421,7 @@ input [`ETH_MBIST_CTRL_WIDTH - 1:0] mbist_ctrl_i; // bist chain shift control
 `endif
 
 `ifdef WISHBONE_DEBUG
-   output [31:0] 		       dbg_dat0;
+   output [31:0]                       dbg_dat0;
 `endif
 
 
@@ -689,9 +685,7 @@ reg RxStatusWriteLatched_sync2;
 reg RxStatusWriteLatched_syncb1;
 reg RxStatusWriteLatched_syncb2;
 
-`ifdef ETH_WISHBONE_B3
 assign m_wb_bte_o = 2'b00;    // Linear burst
-`endif
 
 assign m_wb_stb_o = m_wb_cyc_o;
 
@@ -1144,9 +1138,7 @@ begin
       IncrTxPointer<= 1'b0;
       tx_burst_en<= 1'b1;
       rx_burst_en<= 1'b0;
-`ifdef ETH_WISHBONE_B3
       m_wb_cti_o <= 3'b0;
-`endif
     end
   else
     begin
@@ -1180,15 +1172,11 @@ begin
             if(tx_burst_cnt==(`ETH_BURST_LENGTH-1))
               begin
                 tx_burst_en<= 1'b0;
-`ifdef ETH_WISHBONE_B3
                 m_wb_cti_o <= 3'b111;
-`endif
               end
             else
               begin
-`ifdef ETH_WISHBONE_B3
                 m_wb_cti_o <= 3'b010;
-`endif
               end
           end
         8'b00_?1_00_?1,             // Idle and MWB needed
@@ -1213,15 +1201,11 @@ begin
             if(rx_burst_cnt==(`ETH_BURST_LENGTH-1))
               begin
                 rx_burst_en<= 1'b0;
- `ifdef ETH_WISHBONE_B3
                 m_wb_cti_o <= 3'b111;
- `endif
               end
             else
               begin
- `ifdef ETH_WISHBONE_B3
                 m_wb_cti_o <= 3'b010;
- `endif
               end
           end
         8'b00_?1_00_?0 :// idle and MW is needed (data write to rx buffer)
@@ -1286,9 +1270,7 @@ begin
             tx_burst_en<= txfifo_cnt<(TX_FIFO_DEPTH-`ETH_BURST_LENGTH) & (TxLength>(`ETH_BURST_LENGTH*4+4));
             rx_burst_cnt<= 0;
             rx_burst_en<= MasterWbRX ? enough_data_in_rxfifo_for_burst_plus1 : enough_data_in_rxfifo_for_burst;  // Counter is not decremented, yet, so plus1 is used.
-`ifdef ETH_WISHBONE_B3
               m_wb_cti_o <= 3'b0;
-`endif
           end
         8'b??_00_10_00,// whatever and no master read or write is needed
                        // (ack or err comes finishing previous access)
@@ -1303,9 +1285,7 @@ begin
             // Counter is not decremented, yet, so plus1 is used.
             rx_burst_en<= MasterWbRX ? enough_data_in_rxfifo_for_burst_plus1 :
                                        enough_data_in_rxfifo_for_burst;
-`ifdef ETH_WISHBONE_B3
             m_wb_cti_o <= 3'b0;
-`endif
           end
         8'b00_00_00_00:  // whatever and no master read or write is needed
                          // (ack or err comes finishing previous access)

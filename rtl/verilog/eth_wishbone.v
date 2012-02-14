@@ -2670,8 +2670,6 @@ assign dbg_dat0[7:0] = {MasterWbTX,
                        cyc_cleared,
                        tx_burst,
                        rx_burst};
-`else
-assign dbg_dat0 = 0;
 `endif
 
 

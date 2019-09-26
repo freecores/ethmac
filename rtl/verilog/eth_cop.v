@@ -182,7 +182,7 @@ begin
     end
   else
     begin
-      case({m1_in_progress, m2_in_progress, m1_req, m2_req, m_wb_access_finished})  // synopsys_full_case synopsys_paralel_case
+      case({m1_in_progress, m2_in_progress, m1_req, m2_req, m_wb_access_finished})  
         5'b00_10_0, 5'b00_11_0 :
           begin
             m1_in_progress <= 1'b1;  // idle: m1 or (m1 & m2) want access: m1 -> m

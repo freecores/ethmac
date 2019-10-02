@@ -1,5 +1,5 @@
 CAPI=2:
-name : ::ethmac:0
+name : ::ethmac:0-r1
 
 filesets:
    rtl:

@@ -164,20 +164,14 @@ assign almost_full  = &cnt[CNT_WIDTH-2:0];
 `else   // !ETH_ALTERA_ALTSYNCRAM
   always @ (posedge clk)
   begin
-    if(write & clear)
-      fifo[0] <= data_in;
-    else
    if(write & ~full)
-      fifo[write_pointer] <= data_in;
+      fifo[write_pointer & {CNT_WIDTH-2{~clear}}] <= data_in;
   end
   
 
   always @ (posedge clk)
   begin
-    if(clear)
-      data_out <= fifo[0];
-    else
-      data_out <= fifo[read_pointer];
+      data_out <= fifo[read_pointer & {CNT_WIDTH-2{~clear}}];
   end
 `endif  // !ETH_ALTERA_ALTSYNCRAM
 `endif  // !ETH_FIFO_XILINX
